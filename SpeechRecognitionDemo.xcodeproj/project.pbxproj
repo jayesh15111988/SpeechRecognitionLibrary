@@ -13,7 +13,7 @@
 		E37379A51E78E0A100C546DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E37379A41E78E0A100C546DC /* Assets.xcassets */; };
 		E37379A81E78E0A100C546DC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E37379A61E78E0A100C546DC /* LaunchScreen.storyboard */; };
 		E37379B31E78E0A100C546DC /* SpeechRecognitionDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37379B21E78E0A100C546DC /* SpeechRecognitionDemoTests.swift */; };
-		E3D3DC231E7CBC9800599073 /* SpeechRecognitionUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D3DC221E7CBC9800599073 /* SpeechRecognitionUtility.swift */; };
+		E3D3DC251E7CEB2900599073 /* SpeechRecognitionUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D3DC241E7CEB2900599073 /* SpeechRecognitionUtility.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,7 +37,7 @@
 		E37379AE1E78E0A100C546DC /* SpeechRecognitionDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpeechRecognitionDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E37379B21E78E0A100C546DC /* SpeechRecognitionDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionDemoTests.swift; sourceTree = "<group>"; };
 		E37379B41E78E0A100C546DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E3D3DC221E7CBC9800599073 /* SpeechRecognitionUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionUtility.swift; sourceTree = "<group>"; };
+		E3D3DC241E7CEB2900599073 /* SpeechRecognitionUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SpeechRecognitionUtility.swift; path = Source/SpeechRecognitionUtility.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,7 +102,7 @@
 		E3D3DC211E7CBC3D00599073 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				E3D3DC221E7CBC9800599073 /* SpeechRecognitionUtility.swift */,
+				E3D3DC241E7CEB2900599073 /* SpeechRecognitionUtility.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -211,8 +211,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3D3DC231E7CBC9800599073 /* SpeechRecognitionUtility.swift in Sources */,
 				E37379A01E78E0A100C546DC /* ViewController.swift in Sources */,
+				E3D3DC251E7CEB2900599073 /* SpeechRecognitionUtility.swift in Sources */,
 				E373799E1E78E0A100C546DC /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
