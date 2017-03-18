@@ -8,6 +8,11 @@
 
 import UIKit
 
+enum Error1: Error {
+    case sample
+    case sample1
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -16,6 +21,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+
+        do {
+            try func1()
+        } catch Error1.sample {
+            print("catching")
+        } catch {
+            print("blahhhh")
+        }
+
         return true
     }
 
@@ -39,6 +53,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+
+    func func1() throws {
+        try func2()
+    }
+
+    func func2() throws {
+        throw Error1.sample1
     }
 
 

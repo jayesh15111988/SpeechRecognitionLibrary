@@ -13,6 +13,7 @@
 		E37379A51E78E0A100C546DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E37379A41E78E0A100C546DC /* Assets.xcassets */; };
 		E37379A81E78E0A100C546DC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E37379A61E78E0A100C546DC /* LaunchScreen.storyboard */; };
 		E37379B31E78E0A100C546DC /* SpeechRecognitionDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37379B21E78E0A100C546DC /* SpeechRecognitionDemoTests.swift */; };
+		E3D3DC231E7CBC9800599073 /* SpeechRecognitionUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D3DC221E7CBC9800599073 /* SpeechRecognitionUtility.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +37,7 @@
 		E37379AE1E78E0A100C546DC /* SpeechRecognitionDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpeechRecognitionDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E37379B21E78E0A100C546DC /* SpeechRecognitionDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionDemoTests.swift; sourceTree = "<group>"; };
 		E37379B41E78E0A100C546DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E3D3DC221E7CBC9800599073 /* SpeechRecognitionUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionUtility.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 		E373799C1E78E0A100C546DC /* SpeechRecognitionDemo */ = {
 			isa = PBXGroup;
 			children = (
+				E3D3DC211E7CBC3D00599073 /* Speech Recognition Utility */,
 				E373799D1E78E0A100C546DC /* AppDelegate.swift */,
 				E373799F1E78E0A100C546DC /* ViewController.swift */,
 				E37379A11E78E0A100C546DC /* Main.storyboard */,
@@ -94,6 +97,14 @@
 				E37379B41E78E0A100C546DC /* Info.plist */,
 			);
 			path = SpeechRecognitionDemoTests;
+			sourceTree = "<group>";
+		};
+		E3D3DC211E7CBC3D00599073 /* Speech Recognition Utility */ = {
+			isa = PBXGroup;
+			children = (
+				E3D3DC221E7CBC9800599073 /* SpeechRecognitionUtility.swift */,
+			);
+			name = "Speech Recognition Utility";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -146,6 +157,7 @@
 				TargetAttributes = {
 					E37379991E78E0A100C546DC = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = MV3J9MQS8N;
 						ProvisioningStyle = Automatic;
 					};
 					E37379AD1E78E0A100C546DC = {
@@ -199,6 +211,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3D3DC231E7CBC9800599073 /* SpeechRecognitionUtility.swift in Sources */,
 				E37379A01E78E0A100C546DC /* ViewController.swift in Sources */,
 				E373799E1E78E0A100C546DC /* AppDelegate.swift in Sources */,
 			);
@@ -339,7 +352,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = MV3J9MQS8N;
 				INFOPLIST_FILE = SpeechRecognitionDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = wayfair.org.SpeechRecognitionDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -351,7 +367,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = MV3J9MQS8N;
 				INFOPLIST_FILE = SpeechRecognitionDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = wayfair.org.SpeechRecognitionDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -406,6 +425,7 @@
 				E37379B91E78E0A100C546DC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E37379BA1E78E0A100C546DC /* Build configuration list for PBXNativeTarget "SpeechRecognitionDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -414,6 +434,7 @@
 				E37379BC1E78E0A100C546DC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
