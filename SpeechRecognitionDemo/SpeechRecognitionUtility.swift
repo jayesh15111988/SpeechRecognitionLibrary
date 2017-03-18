@@ -30,6 +30,11 @@ enum SpeechRecognitionOperationState {
     case speechRecognitionStopped
 }
 
+enum RecordingState {
+    case oneWordAtTime
+    case continuous
+}
+
 class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
     private let speechRecognizer: SFSpeechRecognizer?
@@ -39,13 +44,15 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
     private let recognitionStateUpdateBlock: (SpeechRecognitionOperationState) -> Void
     private var speechRecognitionPermissionState: SFSpeechRecognizerAuthorizationStatus
     private let speechRecognitionAuthorizedBlock: () -> Void
+    private let recordingState: RecordingState
 
-    init(with speechRecognitionAuthorizedBlock: @escaping () -> Void, stateUpdateBlock: @escaping (SpeechRecognitionOperationState) -> Void) {
+    init(speechRecognitionAuthorizedBlock : @escaping () -> Void, stateUpdateBlock: @escaping (SpeechRecognitionOperationState) -> Void, recordingState: RecordingState = .oneWordAtTime) {
         speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
         audioEngine = AVAudioEngine()
         recognitionStateUpdateBlock = stateUpdateBlock
         speechRecognitionPermissionState = .notDetermined
         self.speechRecognitionAuthorizedBlock = speechRecognitionAuthorizedBlock
+        self.recordingState = recordingState
         super.init()
         speechRecognizer?.delegate = self
 
@@ -84,7 +91,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
         if recognitionTask != nil {
             recognitionTask?.cancel()
-            self.recognitionStateUpdateBlock(.recognitionTaskCancelled)
+            self.updateSpeechRecognitionState(with: .recognitionTaskCancelled)
             recognitionTask = nil
         }
 
@@ -115,16 +122,15 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
             if result != nil {
                 if let recognizedSpeechString = result?.bestTranscription.formattedString {
-                    self.recognitionStateUpdateBlock(.speechRecognised(recognizedSpeechString))
+                    self.updateSpeechRecognitionState(with: .speechRecognised(recognizedSpeechString))
                     isFinal = true
                 } else {
-                    self.recognitionStateUpdateBlock(.speechNotRecognized)
+                    self.updateSpeechRecognitionState(with: .speechNotRecognized)
                 }
             }
 
-            if error != nil || isFinal {
+            if (error != nil || isFinal) && (self.recordingState == .oneWordAtTime) {
                 self.stopAudioRecognition()
-                self.recognitionStateUpdateBlock(.speechRecognitionStopped)
             }
         })
 
@@ -136,31 +142,50 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         audioEngine.prepare()
 
         if let _ = try? audioEngine.start() {
-            self.recognitionStateUpdateBlock(.audioEngineStart)
+            self.updateSpeechRecognitionState(with: .audioEngineStart)
         } else {
             throw SpeechRecognitionOperationError.audioEngineUnavailable
         }
     }
 
-    func stopAudioRecognition() {
+    func toggleSpeechRecognitionActivity() throws {
+        if self.isSpeechRecognitionOn() == true {
+            self.stopAudioRecognition()
+        } else {
+            try self.runSpeechRecognition()
+        }
+    }
+
+    private func stopAudioRecognition() {
         if self.audioEngine.isRunning {
             self.audioEngine.stop()
             self.recognitionRequest?.endAudio()
-            self.recognitionStateUpdateBlock(.audioEngineStop)
+            self.updateSpeechRecognitionState(with: .audioEngineStop)
+            self.updateSpeechRecognitionState(with: .speechRecognitionStopped)
             self.audioEngine.inputNode?.removeTap(onBus: 0)
         }
 
         self.recognitionRequest = nil
 
         if self.recognitionTask != nil {
-            self.recognitionTask?.cancel()
-            self.recognitionStateUpdateBlock(.recognitionTaskCancelled)
+            self.recognitionTask?.cancel()            
+            self.updateSpeechRecognitionState(with: .recognitionTaskCancelled)
             self.recognitionTask = nil
         }
     }
 
+    private func updateSpeechRecognitionState(with state: SpeechRecognitionOperationState) {
+        OperationQueue.main.addOperation {
+            self.recognitionStateUpdateBlock(state)
+        }
+    }
+
+    private func isSpeechRecognitionOn() -> Bool {
+        return self.audioEngine.isRunning
+    }
+
     func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
-        self.recognitionStateUpdateBlock(.availabilityChanged(available))
+        self.updateSpeechRecognitionState(with: .availabilityChanged(available))
     }
 
     

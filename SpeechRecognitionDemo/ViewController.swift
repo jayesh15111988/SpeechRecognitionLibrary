@@ -12,107 +12,74 @@ import Speech
 class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     @IBOutlet weak var speechTextLabel: UILabel!
-    private let speechrecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-    private var recognitionTask: SFSpeechRecognitionTask?
-    private let audioEngine = AVAudioEngine()
+    @IBOutlet weak var speechButton: UIButton!
+    var speechRecognizerUtility: SpeechRecognitionUtility?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        speechrecognizer?.delegate = self
-
-        SFSpeechRecognizer.requestAuthorization { (status) in
-            switch status {
-            case .authorized:
-                print("Authorized")
-            case .denied:
-                print("Denied")
-            case .notDetermined:
-                print("Failed with an unknown error")
-            case .restricted:
-                print("Restricted the usage of ")
-            }
-        }
-
-        OperationQueue.main.addOperation {
-            self.speechTextLabel.text = "Mic is enabled now"
-        }
+        speechButton.setTitle("Start speech Recognition", for: .normal)
     }
 
     @IBAction func saySomethingButtonPressed(_ sender: Any) {
-        if audioEngine.isRunning {
-            audioEngine.stop()
-            recognitionRequest?.endAudio()
+        if speechRecognizerUtility == nil {
+            speechRecognizerUtility = SpeechRecognitionUtility(speechRecognitionAuthorizedBlock: { [weak self] in
+                self?.performSpeechRecognition()
+            }, stateUpdateBlock: { (currentSpeechRecognitionState) in
+                self.stateChangedWithNew(state: currentSpeechRecognitionState)
+            }, recordingState: .continuous)
         } else {
-            self.runSpeechRecognition()
-
+            self.performSpeechRecognition()
         }
     }
 
-    func runSpeechRecognition() {
-        if recognitionTask != nil {
-            recognitionTask?.cancel()
-            recognitionTask = nil
-        }
-
-        let audioSession = AVAudioSession.sharedInstance()
+    private func performSpeechRecognition() {
         do {
-            try audioSession.setCategory(AVAudioSessionCategoryRecord)
-            try audioSession.setMode(AVAudioSessionModeMeasurement)
-            try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
+            try self.speechRecognizerUtility?.toggleSpeechRecognitionActivity()
+        } catch SpeechRecognitionOperationError.denied {
+            print("Awww")
+        } catch SpeechRecognitionOperationError.notDetermined {
+            print("Awww")
+        } catch SpeechRecognitionOperationError.restricted {
+            print("Awww")
+        } catch SpeechRecognitionOperationError.audioSessionUnavailable {
+            print("Awww")
+        } catch SpeechRecognitionOperationError.inputNodeUnavailable {
+            print("Awww")
+        } catch SpeechRecognitionOperationError.invalidRecognitionRequest {
+            print("Awww")
+        } catch SpeechRecognitionOperationError.audioEngineUnavailable {
+            print("Awww")
         } catch {
-            print("Audio Session setup was failed with an error")
-        }
-
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-
-        guard let inputNode = audioEngine.inputNode else {
-            return
-        }
-
-        guard let recognitionRequest = recognitionRequest else {
-            return
-        }
-
-        recognitionRequest.shouldReportPartialResults = true
-
-        recognitionTask = speechrecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { (result, error) in
-
-            var isFinal = false
-
-            if result != nil {
-                self.speechTextLabel.text = result?.bestTranscription.formattedString
-                isFinal = true
-            }
-
-            if error != nil || isFinal {
-                self.audioEngine.stop()
-                inputNode.removeTap(onBus: 0)
-                self.recognitionRequest = nil
-                self.recognitionTask?.cancel()
-                self.recognitionTask = nil
-            }
-        })
-
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, time) in
-            self.recognitionRequest?.append(buffer)
-        }
-
-        audioEngine.prepare()
-
-        do {
-            try audioEngine.start()
-        } catch {
-            print("Failed to start the audio engine")
+            print("Unknown Error")
         }
     }
 
-    func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
-        print("Speech recognition availability changed. Now is availabke \(available)")
+    private func stateChangedWithNew(state: SpeechRecognitionOperationState) {
+        switch state {
+            case .authorized:
+                print("Authorized")
+            case .audioEngineStart:
+                self.speechTextLabel.text = "Say Something...."
+                self.speechTextLabel.textColor = .green
+                self.speechButton.setTitle("Stop Speech Recognition", for: .normal)
+                print("Audio Engine Start")
+            case .audioEngineStop:
+                print("Audio Engine Stop")
+            case .recognitionTaskCancelled:
+                print("Recognition Task Cancelled")
+            case .speechRecognised(let recognizedString):
+                self.speechTextLabel.text = recognizedString
+                print("Recognized String \(recognizedString)")
+            case .speechNotRecognized:
+                print("Speech Not Recognized")
+            case .availabilityChanged(let availability):
+                print("Availability \(availability)")
+            case .speechRecognitionStopped:
+                self.speechButton.setTitle("Start speech Recognition", for: .normal)
+                self.speechTextLabel.textColor = .red
+                print("Speech Recognition Stopped")
+        }
     }
-
 
 }
 

@@ -79,7 +79,7 @@
 		E373799C1E78E0A100C546DC /* SpeechRecognitionDemo */ = {
 			isa = PBXGroup;
 			children = (
-				E3D3DC211E7CBC3D00599073 /* Speech Recognition Utility */,
+				E3D3DC211E7CBC3D00599073 /* Source */,
 				E373799D1E78E0A100C546DC /* AppDelegate.swift */,
 				E373799F1E78E0A100C546DC /* ViewController.swift */,
 				E37379A11E78E0A100C546DC /* Main.storyboard */,
@@ -99,12 +99,12 @@
 			path = SpeechRecognitionDemoTests;
 			sourceTree = "<group>";
 		};
-		E3D3DC211E7CBC3D00599073 /* Speech Recognition Utility */ = {
+		E3D3DC211E7CBC3D00599073 /* Source */ = {
 			isa = PBXGroup;
 			children = (
 				E3D3DC221E7CBC9800599073 /* SpeechRecognitionUtility.swift */,
 			);
-			name = "Speech Recognition Utility";
+			name = Source;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
