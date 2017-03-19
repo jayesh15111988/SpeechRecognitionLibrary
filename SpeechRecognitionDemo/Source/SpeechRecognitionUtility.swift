@@ -35,6 +35,7 @@ enum RecordingState {
     case continuous
 }
 
+@available(iOS 10.0, *)
 class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
     private let speechRecognizer: SFSpeechRecognizer?
