@@ -24,10 +24,10 @@ enum SpeechRecognitionOperationState {
     case audioEngineStart
     case audioEngineStop
     case recognitionTaskCancelled
-    case speechRecognised(String)
+    case speechRecognized(String)
     case speechNotRecognized
     case availabilityChanged(Bool)
-    case speechRecognitionStopped
+    case speechRecognitionStopped(String)
 }
 
 enum RecordingState {
@@ -45,6 +45,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
     private var speechRecognitionPermissionState: SFSpeechRecognizerAuthorizationStatus
     private let speechRecognitionAuthorizedBlock: () -> Void
     private let recordingState: RecordingState
+    private var recognizedText: String
 
     init(speechRecognitionAuthorizedBlock : @escaping () -> Void, stateUpdateBlock: @escaping (SpeechRecognitionOperationState) -> Void, recordingState: RecordingState = .oneWordAtTime) {
         speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
@@ -53,6 +54,9 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         speechRecognitionPermissionState = .notDetermined
         self.speechRecognitionAuthorizedBlock = speechRecognitionAuthorizedBlock
         self.recordingState = recordingState
+        self.recognizedText = ""
+
+
         super.init()
         speechRecognizer?.delegate = self
 
@@ -122,9 +126,11 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
             if result != nil {
                 if let recognizedSpeechString = result?.bestTranscription.formattedString {
-                    self.updateSpeechRecognitionState(with: .speechRecognised(recognizedSpeechString))
+                    self.recognizedText = recognizedSpeechString
+                    self.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString))
                     isFinal = true
                 } else {
+                    self.recognizedText = ""
                     self.updateSpeechRecognitionState(with: .speechNotRecognized)
                 }
             }
@@ -161,7 +167,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
             self.audioEngine.stop()
             self.recognitionRequest?.endAudio()
             self.updateSpeechRecognitionState(with: .audioEngineStop)
-            self.updateSpeechRecognitionState(with: .speechRecognitionStopped)
+            self.updateSpeechRecognitionState(with: .speechRecognitionStopped(recognizedText))
             self.audioEngine.inputNode?.removeTap(onBus: 0)
         }
 

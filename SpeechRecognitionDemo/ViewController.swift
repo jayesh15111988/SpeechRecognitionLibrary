@@ -67,17 +67,17 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 print("Audio Engine Stop")
             case .recognitionTaskCancelled:
                 print("Recognition Task Cancelled")
-            case .speechRecognised(let recognizedString):
+            case .speechRecognized(let recognizedString):
                 self.speechTextLabel.text = recognizedString
                 print("Recognized String \(recognizedString)")
             case .speechNotRecognized:
                 print("Speech Not Recognized")
             case .availabilityChanged(let availability):
                 print("Availability \(availability)")
-            case .speechRecognitionStopped:
+            case .speechRecognitionStopped(let finalRecognizedString):
                 self.speechButton.setTitle("Start speech Recognition", for: .normal)
                 self.speechTextLabel.textColor = .red
-                print("Speech Recognition Stopped")
+                print("Speech Recognition Stopped with final string \(finalRecognizedString)")
         }
     }
 
