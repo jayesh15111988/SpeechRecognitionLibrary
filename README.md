@@ -1,8 +1,6 @@
  # SpeechRecognitionLibrary
 
-This repository represents the pluggable library to use iOS speech recognition service in any arbitrary iOS application. <br/>
-Text below describes the feature of library and how to use it with example. Library also has a demo project if 
-you're curious about how it works with any arbitrary client app.
+This repository represents the pluggable library to use iOS speech recognition service in any arbitrary iOS application running iOS 10. <br/>
 
 **Step 1:**
 
@@ -27,10 +25,10 @@ Example:
 ```swift
 var speechRecognizerUtility: SpeechRecognitionUtility?
 speechRecognizerUtility = SpeechRecognitionUtility(speechRecognitionAuthorizedBlock: { [weak self] in
-                // Perform speech recognition
-            }, stateUpdateBlock: { (currentSpeechRecognitionState) in
-                // Speech recognition state changed
-            }, recordingState: .Continuous)
+    // Perform speech recognition
+}, stateUpdateBlock: { (currentSpeechRecognitionState) in
+    // Speech recognition state changed
+}, recordingState: .Continuous)
 ```
 
 Initializer will take following parameters as input
@@ -67,15 +65,15 @@ Please refer to library for list of all possible errors that can be thrown from 
 Also note the significance of `stateUpdateBlock` as a part of initializer requirement. Every time speech recognizer utility changes state, this block is a way to notify client about current status. User can then take suitable actions based on the ongoing state. For example, we can detect speech detect event with following state check
  
  ```swift
- speechRecognizerUtility = SpeechRecognitionUtility(speechRecognitionAuthorizedBlock: { [weak self] in
-                // blah
-            }, stateUpdateBlock: { (currentSpeechRecognitionState) in
-                // Speech recognized state
-                switch state {
-                  case .speechRecognised(let recognizedString):                      
-                      print("Recognized String \(recognizedString)")
-                }
-            }, recordingState: .Continuous)
+speechRecognizerUtility = SpeechRecognitionUtility(speechRecognitionAuthorizedBlock: { [weak self] in
+    // blah
+}, stateUpdateBlock: { (currentSpeechRecognitionState) in
+    // Speech recognized state
+    switch state {
+        case .speechRecognised(let recognizedString):                      
+            print("Recognized String \(recognizedString)")
+    }
+}, recordingState: .Continuous)
  ```
  
 Possible states could be, but are not limited to `speechRecognised(String)`, `speechNotRecognized`, `authorized`, `audioEngineStart`.
@@ -96,4 +94,7 @@ Possible states could be, but are not limited to `speechRecognised(String)`, `sp
  
 
 
-> Ref: [AppCoda tutorial](http://www.appcoda.com/siri-speech-framework/)
+> **Ref:** <br/>
+[AppCoda tutorial](http://www.appcoda.com/siri-speech-framework/)<br/>
+[Speech recognition with Swift in iOS 10](https://medium.com/ios-os-x-development/speech-recognition-with-swift-in-ios-10-50d5f4e59c48)<br/>
+[Implementing Speech Recognition in Your App](https://news.realm.io/news/tryswift-marc-brown-say-it-aint-so-implementing-speech-recognition/)<br/>
