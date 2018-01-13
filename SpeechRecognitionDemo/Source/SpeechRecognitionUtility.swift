@@ -125,7 +125,24 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
             if result != nil {
 
-                // Alternate logic to get all possible strings with their confidence levels
+                // Alternate logic to get all possible strings with their confidence levels. We need not use this logic. This is just for demonstration purpose
+                // Commenting this out for now. If you want analyze each individual segment and transcription, you can use the following logic in the code. Commenting out as a part of demo
+//                var maximumConfidenceLevel: Float = 0.0
+//                var bestTranscription = result?.transcriptions.first
+//                if let transcriptions = result?.transcriptions {
+//                    for transcription in transcriptions {
+//                        // We will set the total confidence value for current transcription and use the transcriptio with maximum value of total confidence level.
+//                        var totalConfidenceValue: Float = 0.0
+//                        for segment in transcription.segments {
+//                            totalConfidenceValue = totalConfidenceValue + segment.confidence
+//                        }
+//                        if totalConfidenceValue > maximumConfidenceLevel {
+//                            bestTranscription = transcription
+//                            maximumConfidenceLevel = totalConfidenceValue
+//                        }
+//                    }
+//                }
+//                print("Best Transcription is \(bestTranscription?.formattedString ?? "")")
 
                 if let recognizedSpeechString = result?.bestTranscription.formattedString {
                     self?.recognizedText = recognizedSpeechString
