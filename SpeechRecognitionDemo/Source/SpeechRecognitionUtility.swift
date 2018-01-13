@@ -124,6 +124,9 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
 
             if result != nil {
+
+                // Alternate logic to get all possible strings with their confidence levels
+
                 if let recognizedSpeechString = result?.bestTranscription.formattedString {
                     self?.recognizedText = recognizedSpeechString
                     self?.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString))

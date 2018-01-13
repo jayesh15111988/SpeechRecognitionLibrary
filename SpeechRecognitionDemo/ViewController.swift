@@ -23,8 +23,10 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "Spanish Translation Request"
+        speechButton.setTitleColor(.green, for: .normal)
         speechButton.setTitle("Begin Translation...", for: .normal)
         speechTextLabel.text = "Press Begin Translation button to start translation"
+        self.view.backgroundColor = .purple
     }
 
     @IBAction func saySomethingButtonPressed(_ sender: Any) {
@@ -108,6 +110,8 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 self.speechTextLabel.text = "Provide input to translate"
                 self.speechTextLabel.textColor = .black
                 self.speechButton.setTitle("Stop translation", for: .normal)
+                self.view.backgroundColor = .yellow
+                speechButton.setTitleColor(.black, for: .normal)
                 print("State: Audio Engine Started")
             case .audioEngineStop:
                 print("State: Audio Engine Stopped")
@@ -116,6 +120,8 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             case .speechRecognized(let recognizedString):
                 self.speechTextLabel.text = recognizedString
                 self.speechTextLabel.textColor = .green
+                self.view.backgroundColor = .red
+                speechButton.setTitleColor(.green, for: .normal)
                 print("State: Recognized String \(recognizedString)")
             case .speechNotRecognized:
                 print("State: Speech Not Recognized")
@@ -124,6 +130,8 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             case .speechRecognitionStopped(let finalRecognizedString):
                 self.speechButton.setTitle("Getting translations.....", for: .normal)
                 self.speechTextLabel.textColor = .black
+                self.view.backgroundColor = .purple
+                speechButton.setTitleColor(.green, for: .normal)
                 print("State: Speech Recognition Stopped with final string \(finalRecognizedString)")
         }
     }
