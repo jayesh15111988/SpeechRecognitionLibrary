@@ -126,6 +126,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             case .speechNotRecognized:
                 print("State: Speech Not Recognized")
             case .availabilityChanged(let availability):
+                toggleSpeechButtonAccessState(enabled: availability)
                 print("State: Availability changed. New availability \(availability)")
             case .speechRecognitionStopped(let finalRecognizedString):
                 self.speechButton.setTitle("Getting translations.....", for: .normal)
