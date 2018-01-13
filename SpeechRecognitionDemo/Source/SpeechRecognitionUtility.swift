@@ -42,13 +42,14 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine: AVAudioEngine
-    private let recognitionStateUpdateBlock: (SpeechRecognitionOperationState) -> Void
+    private let recognitionStateUpdateBlock: (SpeechRecognitionOperationState, Bool) -> Void
     private var speechRecognitionPermissionState: SFSpeechRecognizerAuthorizationStatus
     private let speechRecognitionAuthorizedBlock: () -> Void
     private let recordingState: RecordingState
     private var recognizedText: String
+    private var previousOperations: [BlockOperation] = []
 
-    init(speechRecognitionAuthorizedBlock : @escaping () -> Void, stateUpdateBlock: @escaping (SpeechRecognitionOperationState) -> Void, recordingState: RecordingState = .oneWordAtTime) {
+    init(speechRecognitionAuthorizedBlock : @escaping () -> Void, stateUpdateBlock: @escaping (SpeechRecognitionOperationState, Bool) -> Void, recordingState: RecordingState = .oneWordAtTime) {
         speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
         audioEngine = AVAudioEngine()
         recognitionStateUpdateBlock = stateUpdateBlock
@@ -121,23 +122,30 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
         recognitionRequest.shouldReportPartialResults = true
 
-        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { (result, error) in
+        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
 
             var isFinal = false
 
             if result != nil {
                 if let recognizedSpeechString = result?.bestTranscription.formattedString {
-                    self.recognizedText = recognizedSpeechString
-                    self.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString))
-                    isFinal = true
+                    self?.recognizedText = recognizedSpeechString
+                    self?.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString))
+                    let op = BlockOperation()
+                    op.addExecutionBlock {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                            if op == self?.previousOperations.last {
+                                self?.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString), toSearch: true)
+                            } else {
+                                print("Error")
+                            }
+                        }
+                    }
+                    self?.previousOperations.append(op)
+                    OperationQueue.main.addOperation(op)
                 } else {
-                    self.recognizedText = ""
-                    self.updateSpeechRecognitionState(with: .speechNotRecognized)
+                    self?.recognizedText = ""
+                    self?.updateSpeechRecognitionState(with: .speechNotRecognized)
                 }
-            }
-
-            if (error != nil || isFinal) && (self.recordingState == .oneWordAtTime) {
-                self.stopAudioRecognition()
             }
         })
 
@@ -181,9 +189,13 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         }
     }
 
-    private func updateSpeechRecognitionState(with state: SpeechRecognitionOperationState) {
-        OperationQueue.main.addOperation {
-            self.recognitionStateUpdateBlock(state)
+    private func updateSpeechRecognitionState(with state: SpeechRecognitionOperationState, toSearch: Bool = false) {
+        if Thread.isMainThread {
+            self.recognitionStateUpdateBlock(state, toSearch)
+        } else {
+            OperationQueue.main.addOperation {
+                self.recognitionStateUpdateBlock(state, toSearch)
+            }
         }
     }
 

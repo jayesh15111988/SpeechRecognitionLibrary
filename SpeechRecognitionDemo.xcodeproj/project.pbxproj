@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E353AE6B2009C0A700B19278 /* NetworkUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E353AE6A2009C0A700B19278 /* NetworkUtility.swift */; };
 		E373799E1E78E0A100C546DC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E373799D1E78E0A100C546DC /* AppDelegate.swift */; };
 		E37379A01E78E0A100C546DC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E373799F1E78E0A100C546DC /* ViewController.swift */; };
 		E37379A31E78E0A100C546DC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E37379A11E78E0A100C546DC /* Main.storyboard */; };
@@ -27,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E353AE6A2009C0A700B19278 /* NetworkUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkUtility.swift; sourceTree = "<group>"; };
 		E373799A1E78E0A100C546DC /* SpeechRecognitionDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeechRecognitionDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E373799D1E78E0A100C546DC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E373799F1E78E0A100C546DC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 				E37379A41E78E0A100C546DC /* Assets.xcassets */,
 				E37379A61E78E0A100C546DC /* LaunchScreen.storyboard */,
 				E37379A91E78E0A100C546DC /* Info.plist */,
+				E353AE6A2009C0A700B19278 /* NetworkUtility.swift */,
 			);
 			path = SpeechRecognitionDemo;
 			sourceTree = "<group>";
@@ -212,6 +215,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E37379A01E78E0A100C546DC /* ViewController.swift in Sources */,
+				E353AE6B2009C0A700B19278 /* NetworkUtility.swift in Sources */,
 				E3D3DC251E7CEB2900599073 /* SpeechRecognitionUtility.swift in Sources */,
 				E373799E1E78E0A100C546DC /* AppDelegate.swift in Sources */,
 			);

@@ -24,12 +24,40 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         if speechRecognizerUtility == nil {
             speechRecognizerUtility = SpeechRecognitionUtility(speechRecognitionAuthorizedBlock: { [weak self] in
                 self?.performSpeechRecognition()
-            }, stateUpdateBlock: { (currentSpeechRecognitionState) in
-                self.stateChangedWithNew(state: currentSpeechRecognitionState)
+            }, stateUpdateBlock: { [weak self] (currentSpeechRecognitionState, toSearch) in
+                self?.stateChangedWithNew(state: currentSpeechRecognitionState)
+                if toSearch {
+                    self?.speechRecognitionDone()
+                }
             }, recordingState: .continuous)
         } else {
             self.performSpeechRecognition()
         }
+    }
+
+    func speechRecognitionDone() {
+        if let query = self.speechTextLabel.text, query.count > 0 {
+            self.saySomethingButtonPressed(UIButton())
+            self.speechTextLabel.text = "Please wait while we get translations from server"
+            self.speechTextLabel.textColor = .black
+            NetworkRequest.sendRequestWith(query: query, completion: { (translation) in
+                OperationQueue.main.addOperation {
+                    self.speechTextLabel.textColor = .green
+                    self.speechTextLabel.text = translation
+                }
+            })
+        }
+//        self.currentVC.visualSearchBar?.resignFirstResponder()
+//        self.dismiss(animated: true) { [weak self] in
+//            if let query = self?.searchQuery, query.characters.count > 0 {
+//                self?.moveToDestinationViewController(with: query)
+//            }
+//        }
+    }
+
+    func speechRecognitionCancelled() {
+        //self.searchQuery = ""
+        self.speechRecognitionDone()
     }
 
     private func performSpeechRecognition() {
