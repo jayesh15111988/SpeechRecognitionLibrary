@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="6K8-Tx-ni9">
     <device id="retina3_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -9,6 +9,22 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="9kS-el-f7a">
+            <objects>
+                <navigationController id="6K8-Tx-ni9" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="55r-Sp-Z4p">
+                        <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="gM5-hr-WTv"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="JuM-kY-aYE" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-596" y="-169"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
@@ -22,7 +38,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="I9V-Y6-da4">
-                                <rect key="frame" x="99" y="60" width="121" height="30"/>
+                                <rect key="frame" x="99" y="104" width="121" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="121" id="9Qk-Vo-XHY"/>
                                     <constraint firstAttribute="height" constant="30" id="w28-yC-C5Z"/>
@@ -33,7 +49,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="43E-1n-Y2r">
-                                <rect key="frame" x="75" y="120" width="170" height="44"/>
+                                <rect key="frame" x="75" y="164" width="170" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="44" id="m80-ah-fN2"/>
                                     <constraint firstAttribute="width" constant="170" id="zpA-U9-b9y"/>
@@ -51,6 +67,7 @@
                             <constraint firstItem="43E-1n-Y2r" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="qqk-xY-y9l"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="O8z-Ue-fTE"/>
                     <connections>
                         <outlet property="speechButton" destination="I9V-Y6-da4" id="BU6-3O-eRB"/>
                         <outlet property="speechTextLabel" destination="43E-1n-Y2r" id="dR9-dL-lFb"/>

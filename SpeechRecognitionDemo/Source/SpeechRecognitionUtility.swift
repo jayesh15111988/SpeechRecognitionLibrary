@@ -35,7 +35,6 @@ enum RecordingState {
     case continuous
 }
 
-@available(iOS 10.0, *)
 class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
     private let speechRecognizer: SFSpeechRecognizer?
@@ -57,7 +56,6 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         self.speechRecognitionAuthorizedBlock = speechRecognitionAuthorizedBlock
         self.recordingState = recordingState
         self.recognizedText = ""
-
 
         super.init()
         speechRecognizer?.delegate = self
@@ -106,7 +104,8 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
             try audioSession.setCategory(AVAudioSessionCategoryRecord)
             try audioSession.setMode(AVAudioSessionModeMeasurement)
             try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
-        } catch {
+        } catch let error {
+            print(error.localizedDescription)
             throw SpeechRecognitionOperationError.audioSessionUnavailable
         }
 
@@ -121,10 +120,8 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         }
 
         recognitionRequest.shouldReportPartialResults = true
-
+        
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
-
-            var isFinal = false
 
             if result != nil {
                 if let recognizedSpeechString = result?.bestTranscription.formattedString {
@@ -134,7 +131,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
                     op.addExecutionBlock {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                             if op == self?.previousOperations.last {
-                                self?.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString), toSearch: true)
+                                self?.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString), toTranslate: true)
                             } else {
                                 print("Error")
                             }
@@ -183,18 +180,18 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         self.recognitionRequest = nil
 
         if self.recognitionTask != nil {
-            self.recognitionTask?.cancel()            
+            self.recognitionTask?.cancel()
             self.updateSpeechRecognitionState(with: .recognitionTaskCancelled)
             self.recognitionTask = nil
         }
     }
 
-    private func updateSpeechRecognitionState(with state: SpeechRecognitionOperationState, toSearch: Bool = false) {
+    private func updateSpeechRecognitionState(with state: SpeechRecognitionOperationState, toTranslate: Bool = false) {
         if Thread.isMainThread {
-            self.recognitionStateUpdateBlock(state, toSearch)
+            self.recognitionStateUpdateBlock(state, toTranslate)
         } else {
             OperationQueue.main.addOperation {
-                self.recognitionStateUpdateBlock(state, toSearch)
+                self.recognitionStateUpdateBlock(state, toTranslate)
             }
         }
     }

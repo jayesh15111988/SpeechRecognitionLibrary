@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Speech recognition will be used to take input and search for keywords</string>
+	<string>SpeechRecognitionDemo app will utilize Speech Recognition to determine which words you speak</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>SpeechRecognitionDemo app wants to use microphone for demo purpose</string>
+	<string>SpeechRecognitionDemo app will use your microphone to take speech input</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>

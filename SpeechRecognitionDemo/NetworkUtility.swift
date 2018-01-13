@@ -33,7 +33,6 @@ struct NetworkRequest {
                 print(error.localizedDescription)
             }
         }
-
         task.resume()
     }
 }

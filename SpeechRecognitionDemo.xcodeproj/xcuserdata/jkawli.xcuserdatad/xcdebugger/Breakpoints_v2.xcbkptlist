@@ -10,43 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpeechRecognitionDemo/AppDelegate.swift"
-            timestampString = "511495182.539269"
+            timestampString = "537565347.183247"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "28"
-            endingLineNumber = "28"
-            landmarkName = "application(_:didFinishLaunchingWithOptions:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SpeechRecognitionDemo/AppDelegate.swift"
-            timestampString = "511495182.539269"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "26"
-            endingLineNumber = "26"
-            landmarkName = "application(_:didFinishLaunchingWithOptions:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SpeechRecognitionDemo/AppDelegate.swift"
-            timestampString = "511495182.539269"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "63"
-            endingLineNumber = "63"
+            startingLineNumber = "54"
+            endingLineNumber = "54"
             landmarkName = "func2()"
             landmarkType = "7">
          </BreakpointContent>
@@ -58,28 +26,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpeechRecognitionDemo/AppDelegate.swift"
-            timestampString = "511495182.539269"
+            timestampString = "537565347.183314"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
+            startingLineNumber = "50"
+            endingLineNumber = "50"
             landmarkName = "func1()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SpeechRecognitionDemo/AppDelegate.swift"
-            timestampString = "511495182.539269"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "30"
-            endingLineNumber = "30"
-            landmarkName = "application(_:didFinishLaunchingWithOptions:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -96,22 +48,6 @@
             startingLineNumber = "179"
             endingLineNumber = "179"
             landmarkName = "updateSpeechRecognitionState(with:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SpeechRecognitionDemo/AppDelegate.swift"
-            timestampString = "511498448.34567"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
-            landmarkName = "application(_:didFinishLaunchingWithOptions:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -154,12 +90,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpeechRecognitionDemo/Source/SpeechRecognitionUtility.swift"
-            timestampString = "537520368.1371861"
+            timestampString = "537565347.183419"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "197"
-            endingLineNumber = "197"
-            landmarkName = "updateSpeechRecognitionState(with:toSearch:)"
+            startingLineNumber = "196"
+            endingLineNumber = "196"
+            landmarkName = "updateSpeechRecognitionState(with:toTranslate:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -170,12 +106,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpeechRecognitionDemo/Source/SpeechRecognitionUtility.swift"
-            timestampString = "537520368.13728"
+            timestampString = "537565347.183802"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "197"
-            endingLineNumber = "197"
-            landmarkName = "updateSpeechRecognitionState(with:toSearch:)"
+            startingLineNumber = "196"
+            endingLineNumber = "196"
+            landmarkName = "updateSpeechRecognitionState(with:toTranslate:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -186,11 +122,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpeechRecognitionDemo/ViewController.swift"
-            timestampString = "537520368.137359"
+            timestampString = "537565347.184042"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "34"
-            endingLineNumber = "34"
+            startingLineNumber = "46"
+            endingLineNumber = "46"
             landmarkName = "saySomethingButtonPressed(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -202,11 +138,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpeechRecognitionDemo/Source/SpeechRecognitionUtility.swift"
-            timestampString = "537520368.1374151"
+            timestampString = "537565347.18409"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "88"
-            endingLineNumber = "88"
+            startingLineNumber = "86"
+            endingLineNumber = "86"
             landmarkName = "startSpeechRecognition()"
             landmarkType = "7">
          </BreakpointContent>
@@ -218,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpeechRecognitionDemo/Source/SpeechRecognitionUtility.swift"
-            timestampString = "537520368.137484"
+            timestampString = "537565347.184314"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "131"
-            endingLineNumber = "131"
+            startingLineNumber = "130"
+            endingLineNumber = "130"
             landmarkName = "runSpeechRecognition()"
             landmarkType = "7">
          </BreakpointContent>
@@ -234,11 +170,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpeechRecognitionDemo/Source/SpeechRecognitionUtility.swift"
-            timestampString = "537520368.137529"
+            timestampString = "537565347.184538"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "186"
-            endingLineNumber = "186"
+            startingLineNumber = "185"
+            endingLineNumber = "185"
             landmarkName = "stopAudioRecognition()"
             landmarkType = "7">
          </BreakpointContent>
@@ -250,11 +186,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SpeechRecognitionDemo/Source/SpeechRecognitionUtility.swift"
-            timestampString = "537520368.137571"
+            timestampString = "537565347.18476"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "127"
-            endingLineNumber = "127"
+            startingLineNumber = "109"
+            endingLineNumber = "109"
             landmarkName = "runSpeechRecognition()"
             landmarkType = "7">
          </BreakpointContent>
