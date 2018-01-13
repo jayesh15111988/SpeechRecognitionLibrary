@@ -23,7 +23,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     @IBAction func saySomethingButtonPressed(_ sender: Any) {
         if speechRecognizerUtility == nil {
             speechRecognizerUtility = SpeechRecognitionUtility(speechRecognitionAuthorizedBlock: { [weak self] in
-                self?.performSpeechRecognition()
+                self?.toggleSpeechRecognitionState()
             }, stateUpdateBlock: { [weak self] (currentSpeechRecognitionState, toSearch) in
                 self?.stateChangedWithNew(state: currentSpeechRecognitionState)
                 if toSearch {
@@ -31,36 +31,36 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 }
             }, recordingState: .continuous)
         } else {
-            self.performSpeechRecognition()
+            self.toggleSpeechRecognitionState()
         }
     }
 
     func speechRecognitionDone() {
         if let query = self.speechTextLabel.text, query.count > 0 {
-            self.saySomethingButtonPressed(UIButton())
+            self.toggleSpeechRecognitionState()
             self.speechTextLabel.text = "Please wait while we get translations from server"
             self.speechTextLabel.textColor = .black
+            toggleSpeechButtonAccessState(enabled: false)
             NetworkRequest.sendRequestWith(query: query, completion: { (translation) in
                 OperationQueue.main.addOperation {
                     self.speechTextLabel.textColor = .green
                     self.speechTextLabel.text = translation
+                    self.toggleSpeechButtonAccessState(enabled: true)
                 }
             })
         }
-//        self.currentVC.visualSearchBar?.resignFirstResponder()
-//        self.dismiss(animated: true) { [weak self] in
-//            if let query = self?.searchQuery, query.characters.count > 0 {
-//                self?.moveToDestinationViewController(with: query)
-//            }
-//        }
     }
 
-    func speechRecognitionCancelled() {
-        //self.searchQuery = ""
-        self.speechRecognitionDone()
+    func toggleSpeechButtonAccessState(enabled: Bool) {
+        self.speechButton.isUserInteractionEnabled = enabled
+        if enabled {
+            self.speechButton.alpha = 1.0
+        } else {
+            self.speechButton.alpha = 0.2
+        }
     }
 
-    private func performSpeechRecognition() {
+    private func toggleSpeechRecognitionState() {
         do {
             try self.speechRecognizerUtility?.toggleSpeechRecognitionActivity()
         } catch SpeechRecognitionOperationError.denied {
@@ -88,7 +88,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 print("Authorized")
             case .audioEngineStart:
                 self.speechTextLabel.text = "Say Something...."
-                self.speechTextLabel.textColor = .green
+                self.speechTextLabel.textColor = .black
                 self.speechButton.setTitle("Stop Speech Recognition", for: .normal)
                 print("Audio Engine Start")
             case .audioEngineStop:
@@ -97,13 +97,14 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 print("Recognition Task Cancelled")
             case .speechRecognized(let recognizedString):
                 self.speechTextLabel.text = recognizedString
+                self.speechTextLabel.textColor = .green
                 print("Recognized String \(recognizedString)")
             case .speechNotRecognized:
                 print("Speech Not Recognized")
             case .availabilityChanged(let availability):
                 print("Availability \(availability)")
             case .speechRecognitionStopped(let finalRecognizedString):
-                self.speechButton.setTitle("Start speech Recognition", for: .normal)
+                self.speechButton.setTitle("Start new speech Recognition", for: .normal)
                 self.speechTextLabel.textColor = .red
                 print("Speech Recognition Stopped with final string \(finalRecognizedString)")
         }

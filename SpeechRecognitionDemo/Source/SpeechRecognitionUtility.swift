@@ -206,6 +206,4 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
     func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
         self.updateSpeechRecognitionState(with: .availabilityChanged(available))
     }
-
-    
 }
