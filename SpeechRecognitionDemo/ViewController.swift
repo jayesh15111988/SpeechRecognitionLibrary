@@ -9,6 +9,8 @@
 import UIKit
 import Speech
 
+let speechRecognitionTimeout: Double = 1.5
+
 class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     // A label for showing instructions while speech recognition is in progress.
@@ -34,15 +36,15 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             // Initialize the speech recognition utility here
             speechRecognizerUtility = SpeechRecognitionUtility(speechRecognitionAuthorizedBlock: { [weak self] in
                 self?.toggleSpeechRecognitionState()
-            }, stateUpdateBlock: { [weak self] (currentSpeechRecognitionState, toTranslate) in
+            }, stateUpdateBlock: { [weak self] (currentSpeechRecognitionState, finalOutput) in
                 // A block to update the status of speech recognition. This block will get called every time Speech framework recognizes the speech input
                 self?.stateChangedWithNew(state: currentSpeechRecognitionState)
                 // We won't perform translation until final input is ready. We will usually wait for users to finish speaking their input until translation request is sent
-                if toTranslate {
+                if finalOutput {
                     self?.toggleSpeechRecognitionState()
                     self?.speechRecognitionDone()
                 }
-            }, recordingState: .continuous) // We will set state to continuous so that stateUpdateBlock is called for every recognized speech segment.
+            }, timeoutPeriod: speechRecognitionTimeout) // We will set the Speech recognition Timeout to make sure we get the full string output once user has stopped talking. For example, if we specify timeout as 2 seconds. User initiates speech recognition, speaks continuously (Hopegully way less than full one minute), and if pauses for more than 2 seconds, value of finalOutput in above block will be true. Before that you will keep getting output, but that won't be the final one.
         } else {
             // We will call this method to toggle the state on/off of speech recognition operation.
             self.toggleSpeechRecognitionState()

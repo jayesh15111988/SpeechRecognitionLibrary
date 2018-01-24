@@ -30,11 +30,6 @@ enum SpeechRecognitionOperationState {
     case speechRecognitionStopped(String)
 }
 
-enum RecordingState {
-    case oneWordAtTime
-    case continuous
-}
-
 class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
     private let speechRecognizer: SFSpeechRecognizer?
@@ -44,17 +39,17 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
     private let recognitionStateUpdateBlock: (SpeechRecognitionOperationState, Bool) -> Void
     private var speechRecognitionPermissionState: SFSpeechRecognizerAuthorizationStatus
     private let speechRecognitionAuthorizedBlock: () -> Void
-    private let recordingState: RecordingState
+    private let timeoutPeriod: Double
     private var recognizedText: String
     private var previousOperations: [BlockOperation] = []
 
-    init(speechRecognitionAuthorizedBlock : @escaping () -> Void, stateUpdateBlock: @escaping (SpeechRecognitionOperationState, Bool) -> Void, recordingState: RecordingState = .oneWordAtTime) {
+    init(speechRecognitionAuthorizedBlock : @escaping () -> Void, stateUpdateBlock: @escaping (SpeechRecognitionOperationState, Bool) -> Void, timeoutPeriod: Double = 1.5) {
         speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
         audioEngine = AVAudioEngine()
         recognitionStateUpdateBlock = stateUpdateBlock
         speechRecognitionPermissionState = .notDetermined
         self.speechRecognitionAuthorizedBlock = speechRecognitionAuthorizedBlock
-        self.recordingState = recordingState
+        self.timeoutPeriod = timeoutPeriod
         self.recognizedText = ""
 
         super.init()
@@ -105,7 +100,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
             try audioSession.setMode(AVAudioSessionModeMeasurement)
             try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
         } catch let error {
-            print(error.localizedDescription)
+            print("Error Occurred: \(error.localizedDescription)")
             throw SpeechRecognitionOperationError.audioSessionUnavailable
         }
 
@@ -122,6 +117,8 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         recognitionRequest.shouldReportPartialResults = true
         
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
+
+            guard let weakSelf = self else { return }
 
             if result != nil {
 
@@ -149,19 +146,19 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
                     self?.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString))
                     let op = BlockOperation()
                     op.addExecutionBlock {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                            if op == self?.previousOperations.last {
-                                self?.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString), toTranslate: true)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + weakSelf.timeoutPeriod) {
+                            if op == weakSelf.previousOperations.last {
+                                weakSelf.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString), finalOutput: true)
                             } else {
-                                print("Error")
+                                assert(false, "Failed to process audio data in queue")
                             }
                         }
                     }
-                    self?.previousOperations.append(op)
+                    weakSelf.previousOperations.append(op)
                     OperationQueue.main.addOperation(op)
                 } else {
-                    self?.recognizedText = ""
-                    self?.updateSpeechRecognitionState(with: .speechNotRecognized)
+                    weakSelf.recognizedText = ""
+                    weakSelf.updateSpeechRecognitionState(with: .speechNotRecognized)
                 }
             }
         })
@@ -188,6 +185,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         }
     }
 
+    // A method to stop audio engine thereby stopping device to input user audio and process it. It will remove the input source from specified Bus.
     private func stopAudioRecognition() {
         if self.audioEngine.isRunning {
             self.audioEngine.stop()
@@ -206,12 +204,13 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         }
     }
 
-    private func updateSpeechRecognitionState(with state: SpeechRecognitionOperationState, toTranslate: Bool = false) {
+
+    private func updateSpeechRecognitionState(with state: SpeechRecognitionOperationState, finalOutput: Bool = false) {
         if Thread.isMainThread {
-            self.recognitionStateUpdateBlock(state, toTranslate)
+            self.recognitionStateUpdateBlock(state, finalOutput)
         } else {
             OperationQueue.main.addOperation {
-                self.recognitionStateUpdateBlock(state, toTranslate)
+                self.recognitionStateUpdateBlock(state, finalOutput)
             }
         }
     }
