@@ -14,7 +14,6 @@ enum SpeechRecognitionOperationError: Error {
     case notDetermined
     case restricted
     case audioSessionUnavailable
-    case inputNodeUnavailable
     case invalidRecognitionRequest
     case audioEngineUnavailable
 }
@@ -106,9 +105,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
 
-        guard let inputNode = audioEngine.inputNode else {
-            throw SpeechRecognitionOperationError.inputNodeUnavailable
-        }
+        let inputNode = audioEngine.inputNode
 
         guard let recognitionRequest = recognitionRequest else {
             throw SpeechRecognitionOperationError.invalidRecognitionRequest
@@ -192,7 +189,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
             self.recognitionRequest?.endAudio()
             self.updateSpeechRecognitionState(with: .audioEngineStop)
             self.updateSpeechRecognitionState(with: .speechRecognitionStopped(recognizedText))
-            self.audioEngine.inputNode?.removeTap(onBus: 0)
+            self.audioEngine.inputNode.removeTap(onBus: 0)
         }
 
         self.recognitionRequest = nil

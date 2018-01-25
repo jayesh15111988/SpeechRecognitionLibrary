@@ -93,8 +93,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             print("Speech recognition access restricted")
         } catch SpeechRecognitionOperationError.audioSessionUnavailable {
             print("Audio session unavailable")
-        } catch SpeechRecognitionOperationError.inputNodeUnavailable {
-            print("Input node unavailable")
         } catch SpeechRecognitionOperationError.invalidRecognitionRequest {
             print("Recognition request is null. Expected non-null value")
         } catch SpeechRecognitionOperationError.audioEngineUnavailable {
