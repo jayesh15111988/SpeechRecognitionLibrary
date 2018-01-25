@@ -150,7 +150,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
                             if op == weakSelf.previousOperations.last {
                                 weakSelf.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString), finalOutput: true)
                             } else {
-                                assert(false, "Failed to process audio data in queue")
+                                print("Speech recognition in progress. Waiting for user to stop speaking to finalize final output")
                             }
                         }
                     }
