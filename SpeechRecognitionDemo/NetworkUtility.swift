@@ -17,19 +17,18 @@ struct NetworkRequest {
         let url = URL(string: encodedURLString)
 
         let task = URLSession.shared.dataTask(with: url!) { (data, response, error) in
+            guard let data = data else {
+                completion("")
+                return
+            }
+            do {
+                // Convert the data to JSON
+                let jsonSerialized = try JSONSerialization.jsonObject(with: data, options: []) as? [String : Any]
 
-            if let data = data {
-                do {
-                    // Convert the data to JSON
-                    let jsonSerialized = try JSONSerialization.jsonObject(with: data, options: []) as? [String : Any]
-
-                    if let json = jsonSerialized, let code = json["code"] as? Int, code == 200,  let translations = json["text"] as? [String], let bestTranslation = translations.first {
-                        completion(bestTranslation)
-                    }
-                }  catch let error as NSError {
-                    print(error.localizedDescription)
+                if let json = jsonSerialized, let code = json["code"] as? Int, code == 200,  let translations = json["text"] as? [String], let bestTranslation = translations.first {
+                    completion(bestTranslation)
                 }
-            } else if let error = error {
+            }  catch let error as NSError {
                 print(error.localizedDescription)
             }
         }

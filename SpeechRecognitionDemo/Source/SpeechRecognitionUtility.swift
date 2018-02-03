@@ -112,7 +112,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         }
 
         recognitionRequest.shouldReportPartialResults = true
-        
+
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
 
             guard let weakSelf = self else { return }
