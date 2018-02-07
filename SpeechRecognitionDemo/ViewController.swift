@@ -10,6 +10,7 @@ import UIKit
 import Speech
 
 let speechRecognitionTimeout: Double = 1.5
+let maximumAllowedTimeDuration = 15
 
 class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
@@ -24,6 +25,9 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     // A utility to easily use the speech recognition facility.
     var speechRecognizerUtility: SpeechRecognitionUtility?
+
+    private var timer: Timer?
+    private var totalTime: Int = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,6 +54,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 self?.stateChangedWithNew(state: currentSpeechRecognitionState)
                 // We won't perform translation until final input is ready. We will usually wait for users to finish speaking their input until translation request is sent
                 if finalOutput {
+                    //self?.stopTimeCounter()
                     self?.toggleSpeechRecognitionState()
                     self?.speechRecognitionDone()
                 }
@@ -120,6 +125,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 self.speechTextLabel.textColor = .black
                 self.speechButton.setTitle("Listening....", for: .normal)
                 toggleSpeechButtonAccessState(enabled: false)
+                self.startTimeCounterAndUpdateUI()
                 self.view.backgroundColor = .yellow
                 speechButton.setTitleColor(.black, for: .normal)
                 print("State: Audio Engine Started")
@@ -139,7 +145,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 toggleSpeechButtonAccessState(enabled: availability)
                 print("State: Availability changed. New availability \(availability)")
             case .speechRecognitionStopped(let finalRecognizedString):
-                timeLimiterView.backgroundColor = .green
+                self.stopTimeCounter()
                 self.speechButton.setTitle("Getting translations.....", for: .normal)
                 self.speechTextLabel.textColor = .black
                 self.view.backgroundColor = .purple
@@ -148,5 +154,34 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         }
     }
 
+    private func startTimeCounterAndUpdateUI() {
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { [weak self] (timer) in
+            guard let weakSelf = self else { return }
+
+            guard weakSelf.totalTime < maximumAllowedTimeDuration else {
+                //weakSelf.stopTimeCounter()
+                return
+            }
+
+            weakSelf.totalTime = weakSelf.totalTime + 1
+
+            if weakSelf.totalTime >= 2 * (maximumAllowedTimeDuration / 3) {
+                weakSelf.timeLimiterView.backgroundColor = .red
+            } else if weakSelf.totalTime >= maximumAllowedTimeDuration / 3 {
+                weakSelf.timeLimiterView.backgroundColor = .orange
+            } else {
+                weakSelf.timeLimiterView.backgroundColor = .green
+            }
+            print(weakSelf.totalTime)
+
+        })
+    }
+
+    private func stopTimeCounter() {
+        self.timer?.invalidate()
+        self.timer = nil
+        self.totalTime = 0
+        self.timeLimiterView.backgroundColor = .green
+    }
 }
 
