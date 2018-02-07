@@ -19,6 +19,9 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // A button to begin/terminate or toggle the speech recognition.
     @IBOutlet weak var speechButton: UIButton!
 
+    // A view to indicate the current limit reached of user speech input in terms of number of seconds
+    let timeLimiterView = UIView()
+
     // A utility to easily use the speech recognition facility.
     var speechRecognizerUtility: SpeechRecognitionUtility?
 
@@ -28,6 +31,12 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         speechButton.setTitleColor(.green, for: .normal)
         speechButton.setTitle("Begin Translation...", for: .normal)
         speechTextLabel.text = "Press Begin Translation button to start translation"
+        timeLimiterView.translatesAutoresizingMaskIntoConstraints = false
+        timeLimiterView.backgroundColor = .green
+        self.view.addSubview(timeLimiterView)
+        let viewDictionary: [String: Any] = ["timeLimiterView": timeLimiterView, "topLayoutGuide": self.topLayoutGuide]
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[topLayoutGuide]-[timeLimiterView(25)]", options: [], metrics: nil, views: viewDictionary))
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[timeLimiterView(25)]-|", options: [], metrics: nil, views: viewDictionary))
         self.view.backgroundColor = .purple
     }
 
@@ -109,7 +118,8 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             case .audioEngineStart:
                 self.speechTextLabel.text = "Provide input to translate"
                 self.speechTextLabel.textColor = .black
-                self.speechButton.setTitle("Stop translation", for: .normal)
+                self.speechButton.setTitle("Listening....", for: .normal)
+                toggleSpeechButtonAccessState(enabled: false)
                 self.view.backgroundColor = .yellow
                 speechButton.setTitleColor(.black, for: .normal)
                 print("State: Audio Engine Started")
@@ -129,6 +139,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 toggleSpeechButtonAccessState(enabled: availability)
                 print("State: Availability changed. New availability \(availability)")
             case .speechRecognitionStopped(let finalRecognizedString):
+                timeLimiterView.backgroundColor = .green
                 self.speechButton.setTitle("Getting translations.....", for: .normal)
                 self.speechTextLabel.textColor = .black
                 self.view.backgroundColor = .purple

@@ -74,7 +74,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         case .restricted:
             throw SpeechRecognitionOperationError.restricted
         case .authorized:
-            print("User authorized app to access microphone and speech recognition")
+            print("User authorized app to access speech recognition")
         }
 
         if audioEngine.isRunning {
@@ -137,7 +137,6 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 //                    }
 //                }
 //                print("Best Transcription is \(bestTranscription?.formattedString ?? "")")
-
                 if let recognizedSpeechString = result?.bestTranscription.formattedString {
                     self?.recognizedText = recognizedSpeechString
                     self?.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString))
@@ -161,6 +160,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         })
 
         let recordingFormat = inputNode.outputFormat(forBus: 0)
+
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, time) in
             self.recognitionRequest?.append(buffer)
         }
