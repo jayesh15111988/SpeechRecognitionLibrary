@@ -21,7 +21,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     @IBOutlet weak var speechButton: UIButton!
 
     // A view to indicate the current limit reached of user speech input in terms of number of seconds
-    let timeLimiterView = UIView()
+    let timeLimiterIndicatorLabel = UILabel()
 
     // A utility to easily use the speech recognition facility.
     var speechRecognizerUtility: SpeechRecognitionUtility?
@@ -35,12 +35,15 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         speechButton.setTitleColor(.green, for: .normal)
         speechButton.setTitle("Begin Translation...", for: .normal)
         speechTextLabel.text = "Press Begin Translation button to start translation"
-        timeLimiterView.translatesAutoresizingMaskIntoConstraints = false
-        timeLimiterView.backgroundColor = .green
-        self.view.addSubview(timeLimiterView)
-        let viewDictionary: [String: Any] = ["timeLimiterView": timeLimiterView, "topLayoutGuide": self.topLayoutGuide]
-        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[topLayoutGuide]-[timeLimiterView(25)]", options: [], metrics: nil, views: viewDictionary))
-        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[timeLimiterView(25)]-|", options: [], metrics: nil, views: viewDictionary))
+        timeLimiterIndicatorLabel.translatesAutoresizingMaskIntoConstraints = false
+        timeLimiterIndicatorLabel.backgroundColor = .green
+        timeLimiterIndicatorLabel.textAlignment = .center
+        timeLimiterIndicatorLabel.font = UIFont.systemFont(ofSize: 12)
+        timeLimiterIndicatorLabel.text = "0"
+        self.view.addSubview(timeLimiterIndicatorLabel)
+        let viewDictionary: [String: Any] = ["timeLimiterIndicatorLabel": timeLimiterIndicatorLabel, "topLayoutGuide": self.topLayoutGuide]
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[topLayoutGuide]-[timeLimiterIndicatorLabel(25)]", options: [], metrics: nil, views: viewDictionary))
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[timeLimiterIndicatorLabel(25)]-|", options: [], metrics: nil, views: viewDictionary))
         self.view.backgroundColor = .purple
     }
 
@@ -77,7 +80,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                     // Explicitly execute the code on main thread since the request we get back need not be on the main thread.
                     self.speechTextLabel.textColor = .green
                     self.speechTextLabel.text = translation
-                    self.speechButton.setTitle("Begin new translation", for: .normal)
+                    self.speechButton.setTitle("Begin New Translation", for: .normal)
                     // Re-enable the toggle speech button once translations are ready.
                     self.toggleSpeechButtonAccessState(enabled: true)
                 }
@@ -166,14 +169,13 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             weakSelf.totalTime = weakSelf.totalTime + 1
 
             if weakSelf.totalTime >= 2 * (maximumAllowedTimeDuration / 3) {
-                weakSelf.timeLimiterView.backgroundColor = .red
+                weakSelf.timeLimiterIndicatorLabel.backgroundColor = .red
             } else if weakSelf.totalTime >= maximumAllowedTimeDuration / 3 {
-                weakSelf.timeLimiterView.backgroundColor = .orange
+                weakSelf.timeLimiterIndicatorLabel.backgroundColor = .orange
             } else {
-                weakSelf.timeLimiterView.backgroundColor = .green
+                weakSelf.timeLimiterIndicatorLabel.backgroundColor = .green
             }
-            print(weakSelf.totalTime)
-
+            weakSelf.timeLimiterIndicatorLabel.text = "\(weakSelf.totalTime)"
         })
     }
 
@@ -181,7 +183,8 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         self.timer?.invalidate()
         self.timer = nil
         self.totalTime = 0
-        self.timeLimiterView.backgroundColor = .green
+        self.timeLimiterIndicatorLabel.backgroundColor = .green
+        self.timeLimiterIndicatorLabel.text = "0"
     }
 }
 
