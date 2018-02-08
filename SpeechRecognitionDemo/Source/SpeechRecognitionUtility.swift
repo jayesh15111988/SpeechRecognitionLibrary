@@ -118,7 +118,6 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
             guard let weakSelf = self else { return }
 
             if result != nil {
-
                 // Alternate logic to get all possible strings with their confidence levels. We need not use this logic. This is just for demonstration purpose
                 // Commenting this out for now. If you want analyze each individual segment and transcription, you can use the following logic in the code. Commenting out as a part of demo
 //                var maximumConfidenceLevel: Float = 0.0
@@ -162,6 +161,9 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         let recordingFormat = inputNode.outputFormat(forBus: 0)
 
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, time) in
+            //print(buffer.frameLength)
+            print("***")
+            print(time.audioTimeStamp.mSampleTime)
             self.recognitionRequest?.append(buffer)
         }
 
