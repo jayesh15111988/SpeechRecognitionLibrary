@@ -124,7 +124,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             case .authorized:
                 print("State: Speech recognition authorized")
             case .audioEngineStart:
-                self.speechTextLabel.text = "Provide input to translate"
+                self.speechTextLabel.text = "Please say something to translate"
                 self.speechTextLabel.textColor = .black
                 self.speechButton.setTitle("Listening....", for: .normal)
                 toggleSpeechButtonAccessState(enabled: false)
