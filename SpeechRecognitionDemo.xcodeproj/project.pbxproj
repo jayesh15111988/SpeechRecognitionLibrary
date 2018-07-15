@@ -84,11 +84,11 @@
 				E3D3DC211E7CBC3D00599073 /* Source */,
 				E373799D1E78E0A100C546DC /* AppDelegate.swift */,
 				E373799F1E78E0A100C546DC /* ViewController.swift */,
+				E353AE6A2009C0A700B19278 /* NetworkUtility.swift */,
 				E37379A11E78E0A100C546DC /* Main.storyboard */,
 				E37379A41E78E0A100C546DC /* Assets.xcassets */,
 				E37379A61E78E0A100C546DC /* LaunchScreen.storyboard */,
 				E37379A91E78E0A100C546DC /* Info.plist */,
-				E353AE6A2009C0A700B19278 /* NetworkUtility.swift */,
 			);
 			path = SpeechRecognitionDemo;
 			sourceTree = "<group>";
