@@ -10,12 +10,18 @@ import UIKit
 import Speech
 
 let speechRecognitionTimeout: Double = 1.5
-let maximumAllowedTimeDuration = 15
+let maximumAllowedTimeDuration = 30
 
 class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
-    // A label for showing instructions while speech recognition is in progress.
+    // A label for showing instructions while speech recognition is in progress plus the original text to translate.
     @IBOutlet weak var speechTextLabel: UILabel!
+
+    // A label to indicate the status of current translated speech recognition state
+    @IBOutlet weak var statusLabel: UILabel!
+
+    // A label for showing the translated text in the app
+    @IBOutlet weak var translatedTextLabel: UILabel!
 
     // A button to begin/terminate or toggle the speech recognition.
     @IBOutlet weak var speechButton: UIButton!
@@ -35,11 +41,13 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         speechButton.setTitleColor(.green, for: .normal)
         speechButton.setTitle("Begin Translation...", for: .normal)
         speechTextLabel.text = "Press Begin Translation button to start translation"
+        translatedTextLabel.text = ""
         timeLimiterIndicatorLabel.translatesAutoresizingMaskIntoConstraints = false
         timeLimiterIndicatorLabel.backgroundColor = .green
         timeLimiterIndicatorLabel.textAlignment = .center
         timeLimiterIndicatorLabel.font = UIFont.systemFont(ofSize: 12)
         timeLimiterIndicatorLabel.text = "0"
+        statusLabel.text = ""
         self.view.addSubview(timeLimiterIndicatorLabel)
         let viewDictionary: [String: Any] = ["timeLimiterIndicatorLabel": timeLimiterIndicatorLabel, "topLayoutGuide": self.topLayoutGuide]
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[topLayoutGuide]-[timeLimiterIndicatorLabel(25)]", options: [], metrics: nil, views: viewDictionary))
@@ -71,15 +79,16 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     func speechRecognitionDone() {
         // Trigger the request to get translations as soon as user has done providing full speech input. Don't trigger until query length is at least one.
         if let query = self.speechTextLabel.text, query.count > 0 {
-            self.speechTextLabel.text = "Please wait while we get translations from server"
-            self.speechTextLabel.textColor = .black
+            self.statusLabel.text = "Please wait while we get translations from server"
+            self.statusLabel.textColor = .black
             // Disable the toggle speech button while we're getting translations from server.
             toggleSpeechButtonAccessState(enabled: false)
             NetworkRequest.sendRequestWith(query: query, completion: { (translation) in
                 OperationQueue.main.addOperation {
                     // Explicitly execute the code on main thread since the request we get back need not be on the main thread.
                     self.speechTextLabel.textColor = .green
-                    self.speechTextLabel.text = translation
+                    self.translatedTextLabel.text = translation
+                    self.statusLabel.text = ""
                     self.speechButton.setTitle("Begin New Translation", for: .normal)
                     // Re-enable the toggle speech button once translations are ready.
                     self.toggleSpeechButtonAccessState(enabled: true)
@@ -131,6 +140,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 self.startTimeCounterAndUpdateUI()
                 self.view.backgroundColor = .yellow
                 speechButton.setTitleColor(.black, for: .normal)
+                translatedTextLabel.text = ""
                 print("State: Audio Engine Started")
             case .audioEngineStop:
                 print("State: Audio Engine Stopped")
