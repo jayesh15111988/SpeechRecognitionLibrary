@@ -34,7 +34,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
     private let speechRecognizer: SFSpeechRecognizer?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
-    private let audioEngine: AVAudioEngine
+    private var audioEngine: AVAudioEngine?
     private let recognitionStateUpdateBlock: (SpeechRecognitionOperationState, Bool) -> Void
     private var speechRecognitionPermissionState: SFSpeechRecognizerAuthorizationStatus
     private let speechRecognitionAuthorizedBlock: () -> Void
@@ -43,8 +43,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
     private var previousOperations: [BlockOperation] = []
 
     init(speechRecognitionAuthorizedBlock : @escaping () -> Void, stateUpdateBlock: @escaping (SpeechRecognitionOperationState, Bool) -> Void, timeoutPeriod: Double = 1.5) {
-        speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
-        audioEngine = AVAudioEngine()
+        speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en_US"))
         recognitionStateUpdateBlock = stateUpdateBlock
         speechRecognitionPermissionState = .notDetermined
         self.speechRecognitionAuthorizedBlock = speechRecognitionAuthorizedBlock
@@ -57,10 +56,13 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         SFSpeechRecognizer.requestAuthorization { (status) in
             self.speechRecognitionPermissionState = status
             if status == .authorized {
+                self.audioEngine = AVAudioEngine()
                 // Need to return it on Main queue since this block is returned on serial queue. Assuming user wants to do UI actions once request is authorized.
                 OperationQueue.main.addOperation {
                     speechRecognitionAuthorizedBlock()
                 }
+            } else {
+                // show denial message on UI
             }
         }
     }
@@ -77,8 +79,8 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
             print("User authorized app to access speech recognition")
         }
 
-        if audioEngine.isRunning {
-            audioEngine.stop()
+        if audioEngine?.isRunning ?? false {
+            audioEngine?.stop()
             recognitionRequest?.endAudio()
         } else {
             try self.runSpeechRecognition()
@@ -105,6 +107,10 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
 
+        guard let audioEngine = audioEngine else {
+            throw SpeechRecognitionOperationError.audioEngineUnavailable
+        }
+
         let inputNode = audioEngine.inputNode
 
         guard let recognitionRequest = recognitionRequest else {
@@ -113,10 +119,11 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
         recognitionRequest.shouldReportPartialResults = true
 
-        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
+        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest,
+                                               resultHandler: { [weak self] (result, error) in
+
 
             guard let weakSelf = self else { return }
-
             if result != nil {
                 // Alternate logic to get all possible strings with their confidence levels. We need not use this logic. This is just for demonstration purpose
                 // Commenting this out for now. If you want analyze each individual segment and transcription, you can use the following logic in the code. Commenting out as a part of demo
@@ -162,8 +169,8 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, time) in
             //print(buffer.frameLength)
-            print("***")
-            print(time.audioTimeStamp.mSampleTime)
+            //print("***")
+            //print(time.audioTimeStamp.mSampleTime)
             self.recognitionRequest?.append(buffer)
         }
 
@@ -186,12 +193,13 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
     // A method to stop audio engine thereby stopping device to input user audio and process it. It will remove the input source from specified Bus.
     private func stopAudioRecognition() {
-        if self.audioEngine.isRunning {
-            self.audioEngine.stop()
+        guard let audioEngine = audioEngine else { return }
+        if audioEngine.isRunning {
+            audioEngine.stop()
             self.recognitionRequest?.endAudio()
             self.updateSpeechRecognitionState(with: .audioEngineStop)
             self.updateSpeechRecognitionState(with: .speechRecognitionStopped(recognizedText))
-            self.audioEngine.inputNode.removeTap(onBus: 0)
+            audioEngine.inputNode.removeTap(onBus: 0)
         }
 
         self.recognitionRequest = nil
@@ -215,7 +223,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
     }
 
     private func isSpeechRecognitionOn() -> Bool {
-        return self.audioEngine.isRunning
+        return self.audioEngine?.isRunning ?? false
     }
 
     func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
