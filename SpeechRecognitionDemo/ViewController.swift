@@ -10,7 +10,7 @@ import UIKit
 import Speech
 
 let speechRecognitionTimeout: Double = 1.5
-let maximumAllowedTimeDuration = 30
+let maximumAllowedTimeDuration = 10
 
 class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
@@ -22,6 +22,9 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     // A label for showing the translated text in the app
     @IBOutlet weak var translatedTextLabel: UILabel!
+
+    // An image to indicate the recording status of current session
+    @IBOutlet weak var recordingIndicator: UIImageView!
 
     // A button to begin/terminate or toggle the speech recognition.
     @IBOutlet weak var speechButton: UIButton!
@@ -78,7 +81,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     func speechRecognitionDone() {
         // Trigger the request to get translations as soon as user has done providing full speech input. Don't trigger until query length is at least one.
-        if let query = self.speechTextLabel.text, query.count > 0 {
+        if let query = self.speechTextLabel.text, query.count > 0, query != "Please say something to translate" {
             self.statusLabel.text = "Please wait while we get translations from server"
             self.statusLabel.textColor = .black
             // Disable the toggle speech button while we're getting translations from server.
@@ -86,15 +89,21 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             NetworkRequest.sendRequestWith(query: query, completion: { (translation) in
                 OperationQueue.main.addOperation {
                     // Explicitly execute the code on main thread since the request we get back need not be on the main thread.
-                    self.speechTextLabel.textColor = .green
                     self.translatedTextLabel.text = translation
-                    self.statusLabel.text = ""
-                    self.speechButton.setTitle("Begin New Translation", for: .normal)
-                    // Re-enable the toggle speech button once translations are ready.
-                    self.toggleSpeechButtonAccessState(enabled: true)
+                    self.resetState()
                 }
             })
+        } else {
+            resetState()
         }
+    }
+
+    func resetState() {
+        self.speechTextLabel.textColor = .green
+        self.statusLabel.text = ""
+        self.speechButton.setTitle("Begin New Translation", for: .normal)
+        // Re-enable the toggle speech button once translations are ready.
+        self.toggleSpeechButtonAccessState(enabled: true)
     }
 
     // A method to toggle the userInteractionState of toggle speech state button
@@ -103,7 +112,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         if enabled {
             self.speechButton.alpha = 1.0
         } else {
-            self.speechButton.alpha = 0.2
+            self.speechButton.alpha = 0.6
         }
     }
 
@@ -139,17 +148,19 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 toggleSpeechButtonAccessState(enabled: false)
                 self.startTimeCounterAndUpdateUI()
                 self.view.backgroundColor = .yellow
-                speechButton.setTitleColor(.black, for: .normal)
+                speechButton.setTitleColor(.red, for: .normal)
                 translatedTextLabel.text = ""
+                self.recordingIndicator.isHidden = false
                 print("State: Audio Engine Started")
             case .audioEngineStop:
                 print("State: Audio Engine Stopped")
+            self.recordingIndicator.isHidden = true
             case .recognitionTaskCancelled:
                 print("State: Recognition Task Cancelled")
             case .speechRecognized(let recognizedString):
                 self.speechTextLabel.text = recognizedString
                 self.speechTextLabel.textColor = .green
-                self.view.backgroundColor = .red
+                self.view.backgroundColor = .orange
                 speechButton.setTitleColor(.green, for: .normal)
                 print("State: Recognized String \(recognizedString)")
             case .speechNotRecognized:
@@ -172,7 +183,8 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             guard let weakSelf = self else { return }
 
             guard weakSelf.totalTime < maximumAllowedTimeDuration else {
-                //weakSelf.stopTimeCounter()
+                weakSelf.toggleSpeechRecognitionState()
+                weakSelf.speechRecognitionDone()
                 return
             }
 

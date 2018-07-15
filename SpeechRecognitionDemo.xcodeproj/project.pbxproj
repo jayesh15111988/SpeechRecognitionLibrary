@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E330E66320FB9A300046F02F /* red_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E330E66220FB9A300046F02F /* red_icon.png */; };
 		E353AE6B2009C0A700B19278 /* NetworkUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E353AE6A2009C0A700B19278 /* NetworkUtility.swift */; };
 		E373799E1E78E0A100C546DC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E373799D1E78E0A100C546DC /* AppDelegate.swift */; };
 		E37379A01E78E0A100C546DC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E373799F1E78E0A100C546DC /* ViewController.swift */; };
@@ -28,6 +29,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E330E66220FB9A300046F02F /* red_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = red_icon.png; sourceTree = "<group>"; };
 		E353AE6A2009C0A700B19278 /* NetworkUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkUtility.swift; sourceTree = "<group>"; };
 		E373799A1E78E0A100C546DC /* SpeechRecognitionDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SpeechRecognitionDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E373799D1E78E0A100C546DC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -83,6 +85,7 @@
 			children = (
 				E3D3DC211E7CBC3D00599073 /* Source */,
 				E373799D1E78E0A100C546DC /* AppDelegate.swift */,
+				E330E66220FB9A300046F02F /* red_icon.png */,
 				E373799F1E78E0A100C546DC /* ViewController.swift */,
 				E353AE6A2009C0A700B19278 /* NetworkUtility.swift */,
 				E37379A11E78E0A100C546DC /* Main.storyboard */,
@@ -165,6 +168,7 @@
 					};
 					E37379AD1E78E0A100C546DC = {
 						CreatedOnToolsVersion = 8.2.1;
+						LastSwiftMigration = 0930;
 						ProvisioningStyle = Automatic;
 						TestTargetID = E37379991E78E0A100C546DC;
 					};
@@ -196,6 +200,7 @@
 			files = (
 				E37379A81E78E0A100C546DC /* LaunchScreen.storyboard in Resources */,
 				E37379A51E78E0A100C546DC /* Assets.xcassets in Resources */,
+				E330E66320FB9A300046F02F /* red_icon.png in Resources */,
 				E37379A31E78E0A100C546DC /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -391,7 +396,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = wayfair.org.SpeechRecognitionDemoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SpeechRecognitionDemo.app/SpeechRecognitionDemo";
 			};
 			name = Debug;
@@ -405,7 +411,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = wayfair.org.SpeechRecognitionDemoTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SpeechRecognitionDemo.app/SpeechRecognitionDemo";
 			};
 			name = Release;
