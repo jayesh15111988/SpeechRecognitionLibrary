@@ -10,7 +10,7 @@ import UIKit
 import Speech
 
 let speechRecognitionTimeout: Double = 1.5
-let maximumAllowedTimeDuration = 10
+let maximumAllowedTimeDuration = 30
 
 class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
@@ -83,7 +83,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         // Trigger the request to get translations as soon as user has done providing full speech input. Don't trigger until query length is at least one.
         if let query = self.speechTextLabel.text, query.count > 0, query != "Please say something to translate" {
             self.statusLabel.text = "Please wait while we get translations from server"
-            self.statusLabel.textColor = .black
+            self.statusLabel.textColor = .white
             // Disable the toggle speech button while we're getting translations from server.
             toggleSpeechButtonAccessState(enabled: false)
             NetworkRequest.sendRequestWith(query: query, completion: { (translation) in
@@ -171,7 +171,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             case .speechRecognitionStopped(let finalRecognizedString):
                 self.stopTimeCounter()
                 self.speechButton.setTitle("Getting translations.....", for: .normal)
-                self.speechTextLabel.textColor = .black
+                self.speechTextLabel.textColor = .white
                 self.view.backgroundColor = .purple
                 speechButton.setTitleColor(.green, for: .normal)
                 print("State: Speech Recognition Stopped with final string \(finalRecognizedString)")
