@@ -16,6 +16,7 @@
 		E37379A81E78E0A100C546DC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E37379A61E78E0A100C546DC /* LaunchScreen.storyboard */; };
 		E37379B31E78E0A100C546DC /* SpeechRecognitionDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37379B21E78E0A100C546DC /* SpeechRecognitionDemoTests.swift */; };
 		E3D3DC251E7CEB2900599073 /* SpeechRecognitionUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D3DC241E7CEB2900599073 /* SpeechRecognitionUtility.swift */; };
+		E3FB3E4A2134613900F6DC8A /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FB3E492134613900F6DC8A /* Reachability.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +43,7 @@
 		E37379B21E78E0A100C546DC /* SpeechRecognitionDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionDemoTests.swift; sourceTree = "<group>"; };
 		E37379B41E78E0A100C546DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E3D3DC241E7CEB2900599073 /* SpeechRecognitionUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SpeechRecognitionUtility.swift; path = Source/SpeechRecognitionUtility.swift; sourceTree = "<group>"; };
+		E3FB3E492134613900F6DC8A /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +85,7 @@
 		E373799C1E78E0A100C546DC /* SpeechRecognitionDemo */ = {
 			isa = PBXGroup;
 			children = (
+				E3FB3E482134612800F6DC8A /* 3rd Party */,
 				E3D3DC211E7CBC3D00599073 /* Source */,
 				E373799D1E78E0A100C546DC /* AppDelegate.swift */,
 				E330E66220FB9A300046F02F /* red_icon.png */,
@@ -111,6 +114,14 @@
 				E3D3DC241E7CEB2900599073 /* SpeechRecognitionUtility.swift */,
 			);
 			name = Source;
+			sourceTree = "<group>";
+		};
+		E3FB3E482134612800F6DC8A /* 3rd Party */ = {
+			isa = PBXGroup;
+			children = (
+				E3FB3E492134613900F6DC8A /* Reachability.swift */,
+			);
+			name = "3rd Party";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -222,6 +233,7 @@
 				E37379A01E78E0A100C546DC /* ViewController.swift in Sources */,
 				E353AE6B2009C0A700B19278 /* NetworkUtility.swift in Sources */,
 				E3D3DC251E7CEB2900599073 /* SpeechRecognitionUtility.swift in Sources */,
+				E3FB3E4A2134613900F6DC8A /* Reachability.swift in Sources */,
 				E373799E1E78E0A100C546DC /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

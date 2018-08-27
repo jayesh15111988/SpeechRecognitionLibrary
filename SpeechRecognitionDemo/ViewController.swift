@@ -14,6 +14,8 @@ let maximumAllowedTimeDuration = 30
 
 class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
+    let reachability = Reachability()!
+
     // A label for showing instructions while speech recognition is in progress plus the original text to translate.
     @IBOutlet weak var speechTextLabel: UILabel!
 
@@ -40,6 +42,23 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        reachability.whenReachable = { [weak self] reachable in
+            self?.toggleSpeechButtonAccessState(enabled: true)
+        }
+
+        reachability.whenUnreachable = {[weak self] _ in
+            self?.speechButton.setTitle("No network connectivity", for: .normal)
+            self?.toggleSpeechButtonAccessState(enabled: false)
+        }
+
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("Unable to start notifier")
+        }
+
+
         self.title = "Spanish Translation Request"
         speechButton.setTitleColor(.green, for: .normal)
         speechButton.setTitle("Begin Translation...", for: .normal)
@@ -110,6 +129,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     func toggleSpeechButtonAccessState(enabled: Bool) {
         self.speechButton.isUserInteractionEnabled = enabled
         if enabled {
+            self.speechButton.setTitle("Begin New Translation", for: .normal)
             self.speechButton.alpha = 1.0
         } else {
             self.speechButton.alpha = 0.6

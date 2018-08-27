@@ -143,6 +143,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 //                    }
 //                }
 //                print("Best Transcription is \(bestTranscription?.formattedString ?? "")")
+                print("Total number of interpretations \(result?.transcriptions.count)")
                 if let recognizedSpeechString = result?.bestTranscription.formattedString {
                     self?.recognizedText = recognizedSpeechString
                     self?.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString))
@@ -227,6 +228,6 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
     }
 
     func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
-        self.updateSpeechRecognitionState(with: .availabilityChanged(available))
+
     }
 }

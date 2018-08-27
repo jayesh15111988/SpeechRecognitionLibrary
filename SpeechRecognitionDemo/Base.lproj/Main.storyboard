@@ -89,6 +89,7 @@
                         <constraints>
                             <constraint firstItem="KwC-uI-0gp" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="10" id="0ai-No-LD4"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Uq1-XV-rRe" secondAttribute="trailing" constant="9" id="188-ue-eDl"/>
+                            <constraint firstAttribute="trailingMargin" relation="greaterThanOrEqual" secondItem="I9V-Y6-da4" secondAttribute="trailing" constant="10" id="57j-6j-mRV"/>
                             <constraint firstItem="Uq1-XV-rRe" firstAttribute="top" secondItem="MmS-Mi-K4b" secondAttribute="bottom" constant="24" id="Aaw-XP-IzI"/>
                             <constraint firstItem="I9V-Y6-da4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Afb-hz-3mP"/>
                             <constraint firstItem="Uq1-XV-rRe" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="9" id="BuJ-K4-eaG"/>
@@ -96,6 +97,7 @@
                             <constraint firstItem="MmS-Mi-K4b" firstAttribute="trailing" secondItem="43E-1n-Y2r" secondAttribute="trailing" id="a35-tu-TOP"/>
                             <constraint firstItem="MmS-Mi-K4b" firstAttribute="leading" secondItem="43E-1n-Y2r" secondAttribute="leading" id="aI5-hf-8SA"/>
                             <constraint firstItem="MmS-Mi-K4b" firstAttribute="top" secondItem="43E-1n-Y2r" secondAttribute="bottom" constant="24" id="b8X-TI-LKs"/>
+                            <constraint firstItem="I9V-Y6-da4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="10" id="eR2-d4-VjQ"/>
                             <constraint firstItem="I9V-Y6-da4" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="40" id="gcK-z3-FgU"/>
                             <constraint firstItem="43E-1n-Y2r" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="qqk-xY-y9l"/>
                             <constraint firstItem="KwC-uI-0gp" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="10" id="wXk-aP-mYw"/>
