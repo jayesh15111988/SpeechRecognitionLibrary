@@ -19,13 +19,14 @@ enum SpeechRecognitionOperationError: Error {
 }
 
 enum SpeechRecognitionOperationState {
+    case denied
     case authorized
     case audioEngineStart
     case audioEngineStop
     case recognitionTaskCancelled
     case speechRecognized(String)
     case speechNotRecognized
-    case availabilityChanged(Bool)
+    // Called when speech recognition is done and we're ready to send those strings to server for translations
     case speechRecognitionStopped(String)
 }
 
@@ -38,16 +39,14 @@ class SpeechRecognitionUtility: NSObject {
     private let recognitionStateUpdateBlock: (SpeechRecognitionOperationState, Bool) -> Void
     private var speechRecognitionPermissionState: SFSpeechRecognizerAuthorizationStatus
     private let speechRecognitionAuthorizedBlock: () -> Void
-    private let timeoutPeriod: Double
     private var recognizedText: String
 
-    init(speechRecognitionAuthorizedBlock : @escaping () -> Void, stateUpdateBlock: @escaping (SpeechRecognitionOperationState, Bool) -> Void, timeoutPeriod: Double = 1.5) {
+    init(speechRecognitionAuthorizedBlock : @escaping () -> Void, stateUpdateBlock: @escaping (SpeechRecognitionOperationState, Bool) -> Void) {
         speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en_US"))
         recognitionStateUpdateBlock = stateUpdateBlock
-        let supportedLocales = SFSpeechRecognizer.supportedLocales()
+        // let supportedLocales = SFSpeechRecognizer.supportedLocales()
         speechRecognitionPermissionState = .notDetermined
         self.speechRecognitionAuthorizedBlock = speechRecognitionAuthorizedBlock
-        self.timeoutPeriod = timeoutPeriod
         self.recognizedText = ""
 
         super.init()
@@ -62,6 +61,7 @@ class SpeechRecognitionUtility: NSObject {
                 }
             } else {
                 // show denial message on UI
+                self.recognitionStateUpdateBlock(.denied, true)
             }
         }
     }
@@ -120,6 +120,8 @@ class SpeechRecognitionUtility: NSObject {
 
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
             guard let strongSelf = self else { return }
+            // Hypotheses for possible transcriptions, sorted in decending order of confidence (more likely first)
+            // result.transcriptions
             if let result = result {
                 strongSelf.updateSpeechRecognitionState(with: .speechRecognized(result.bestTranscription.formattedString))
             } else {
@@ -176,12 +178,8 @@ class SpeechRecognitionUtility: NSObject {
 
 
     private func updateSpeechRecognitionState(with state: SpeechRecognitionOperationState, finalOutput: Bool = false) {
-        if Thread.isMainThread {
+        OperationQueue.main.addOperation {
             self.recognitionStateUpdateBlock(state, finalOutput)
-        } else {
-            OperationQueue.main.addOperation {
-                self.recognitionStateUpdateBlock(state, finalOutput)
-            }
         }
     }
 

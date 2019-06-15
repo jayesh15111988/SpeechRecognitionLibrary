@@ -64,7 +64,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             print("Unable to start notifier")
         }
 
-
         self.title = "Spanish Translation Request"
         speechButton.setTitleColor(.green, for: .normal)
         speechButton.setTitle("Begin Translation...", for: .normal)
@@ -99,9 +98,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[requestTranslationsButton]-|", options: [], metrics: nil, views: viewDictionary))
 
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[statusLabel]-[speechFinishedButton(44)]-[requestTranslationsButton(44)]", options: [], metrics: nil, views: viewDictionary))
-
-
-        self.view.backgroundColor = .purple
     }
 
     @objc func speechFinished() {
@@ -126,10 +122,9 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 self?.stateChangedWithNew(state: currentSpeechRecognitionState)
                 // We won't perform translation until final input is ready. We will usually wait for users to finish speaking their input until translation request is sent
                 if finalOutput {
-                    //self?.stopTimeCounter()
                     self?.toggleSpeechRecognitionState()
                 }
-            }, timeoutPeriod: speechRecognitionTimeout) // We will set the Speech recognition Timeout to make sure we get the full string output once user has stopped talking. For example, if we specify timeout as 2 seconds. User initiates speech recognition, speaks continuously (Hopegully way less than full one minute), and if pauses for more than 2 seconds, value of finalOutput in above block will be true. Before that you will keep getting output, but that won't be the final one.
+            })
         } else {
             // We will call this method to toggle the state on/off of speech recognition operation.
             self.toggleSpeechRecognitionState()
@@ -139,9 +134,8 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     func requestTranslationsFromServer() {
         // Trigger the request to get translations as soon as user has done providing full speech input. Don't trigger until query length is at least one.
         self.speechButton.setTitle("Getting translations.....", for: .normal)
-        if let query = self.speechTextLabel.text, query.count > 0, query != "Please say something to translate" {
+        if let query = self.speechTextLabel.text, query.count > 0 {
             self.statusLabel.text = "Please wait while we get translations from server"
-            self.statusLabel.textColor = .white
             // Disable the toggle speech button while we're getting translations from server.
             toggleSpeechButtonAccessState(enabled: false)
             NetworkRequest.sendRequestWith(query: query, completion: { (translation) in
@@ -157,7 +151,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
 
     func resetState() {
-        self.speechTextLabel.textColor = .green
         self.statusLabel.text = ""
         self.speechButton.setTitle("Begin New Translation", for: .normal)
         // Re-enable the toggle speech button once translations are ready.
@@ -199,16 +192,16 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     private func stateChangedWithNew(state: SpeechRecognitionOperationState) {
         switch state {
+            case .denied:
+                print("Access to Speech Recognizer denied")
             case .authorized:
                 print("State: Speech recognition authorized")
             case .audioEngineStart:
                 self.speechTextLabel.text = "Please say something to translate"
-                self.speechTextLabel.textColor = .black
                 self.speechButton.setTitle("Listening....", for: .normal)
                 self.speechFinishedButton.isHidden = false
                 toggleSpeechButtonAccessState(enabled: false)
                 self.startTimeCounterAndUpdateUI()
-                self.view.backgroundColor = .yellow
                 speechButton.setTitleColor(.red, for: .normal)
                 translatedTextLabel.text = ""
                 self.speechFinishedButton.isHidden = false
@@ -221,20 +214,14 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 print("State: Recognition Task Cancelled")
             case .speechRecognized(let recognizedString):
                 self.speechTextLabel.text = recognizedString
-                self.speechTextLabel.textColor = .green
                 self.requestTranslationsButton.setTitle("Translate", for: .normal)
-                self.view.backgroundColor = .orange
                 speechButton.setTitleColor(.green, for: .normal)
                 print("State: Recognized String \(recognizedString)")
             case .speechNotRecognized:
                 print("State: Speech Not Recognized")
-            case .availabilityChanged(let availability):
-                toggleSpeechButtonAccessState(enabled: availability)
-                print("State: Availability changed. New availability \(availability)")
+            // Called when speech recognition is done, audio engine is stopped and strings are finally sent for translation on the server.
             case .speechRecognitionStopped(let finalRecognizedString):
                 self.stopTimeCounter()
-                self.speechTextLabel.textColor = .white
-                self.view.backgroundColor = .purple
                 speechButton.setTitleColor(.green, for: .normal)
                 print("State: Speech Recognition Stopped with final string \(finalRecognizedString)")
         }
