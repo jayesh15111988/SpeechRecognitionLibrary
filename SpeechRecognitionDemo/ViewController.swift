@@ -10,7 +10,7 @@ import UIKit
 import Speech
 
 let speechRecognitionTimeout: Double = 1.5
-let maximumAllowedTimeDuration = 30
+let maximumAllowedTimeDuration = 10
 
 class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
@@ -34,6 +34,10 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // A view to indicate the current limit reached of user speech input in terms of number of seconds
     let timeLimiterIndicatorLabel = UILabel()
 
+    let speechFinishedButton = UIButton()
+
+    let requestTranslationsButton = UIButton()
+
     // A utility to easily use the speech recognition facility.
     var speechRecognizerUtility: SpeechRecognitionUtility?
 
@@ -50,6 +54,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         reachability.whenUnreachable = {[weak self] _ in
             self?.speechButton.setTitle("No network connectivity", for: .normal)
             self?.toggleSpeechButtonAccessState(enabled: false)
+            self?.speechFinishedButton.isHidden = true
         }
 
         do {
@@ -70,11 +75,44 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         timeLimiterIndicatorLabel.font = UIFont.systemFont(ofSize: 12)
         timeLimiterIndicatorLabel.text = "0"
         statusLabel.text = ""
+        speechFinishedButton.translatesAutoresizingMaskIntoConstraints = false
+        speechFinishedButton.addTarget(self, action: #selector(speechFinished), for: .touchUpInside)
+        speechFinishedButton.setTitle("Finish Speech", for: .normal)
+        speechFinishedButton.setTitleColor(.red, for: .normal)
+
+        requestTranslationsButton.translatesAutoresizingMaskIntoConstraints = false
+        requestTranslationsButton.addTarget(self, action: #selector(requestTranslations), for: .touchUpInside)
+        requestTranslationsButton.setTitle("", for: .normal)
+        requestTranslationsButton.setTitleColor(.red, for: .normal)
+
         self.view.addSubview(timeLimiterIndicatorLabel)
-        let viewDictionary: [String: Any] = ["timeLimiterIndicatorLabel": timeLimiterIndicatorLabel, "topLayoutGuide": self.topLayoutGuide]
+        self.view.addSubview(speechFinishedButton)
+        self.view.addSubview(requestTranslationsButton)
+
+        let viewDictionary: [String: Any] = ["timeLimiterIndicatorLabel": timeLimiterIndicatorLabel, "topLayoutGuide": self.topLayoutGuide, "speechFinishedButton": speechFinishedButton, "statusLabel": statusLabel, "requestTranslationsButton": requestTranslationsButton]
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[topLayoutGuide]-[timeLimiterIndicatorLabel(25)]", options: [], metrics: nil, views: viewDictionary))
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[timeLimiterIndicatorLabel(25)]-|", options: [], metrics: nil, views: viewDictionary))
+
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[speechFinishedButton]-|", options: [], metrics: nil, views: viewDictionary))
+
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[requestTranslationsButton]-|", options: [], metrics: nil, views: viewDictionary))
+
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[statusLabel]-[speechFinishedButton(44)]-[requestTranslationsButton(44)]", options: [], metrics: nil, views: viewDictionary))
+
+
         self.view.backgroundColor = .purple
+    }
+
+    @objc func speechFinished() {
+        speechRecognizerUtility?.speechFinished()
+        speechFinishedButton.isHidden = true
+        speechButton.setTitle(nil, for: .normal)
+    }
+
+    @objc func requestTranslations() {
+        toggleSpeechRecognitionState()
+        stopTimeCounter()
+        requestTranslationsFromServer()
     }
 
     @IBAction func saySomethingButtonPressed(_ sender: Any) {
@@ -89,7 +127,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 if finalOutput {
                     //self?.stopTimeCounter()
                     self?.toggleSpeechRecognitionState()
-                    self?.speechRecognitionDone()
                 }
             }, timeoutPeriod: speechRecognitionTimeout) // We will set the Speech recognition Timeout to make sure we get the full string output once user has stopped talking. For example, if we specify timeout as 2 seconds. User initiates speech recognition, speaks continuously (Hopegully way less than full one minute), and if pauses for more than 2 seconds, value of finalOutput in above block will be true. Before that you will keep getting output, but that won't be the final one.
         } else {
@@ -98,8 +135,9 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         }
     }
 
-    func speechRecognitionDone() {
+    func requestTranslationsFromServer() {
         // Trigger the request to get translations as soon as user has done providing full speech input. Don't trigger until query length is at least one.
+        self.speechButton.setTitle("Getting translations.....", for: .normal)
         if let query = self.speechTextLabel.text, query.count > 0, query != "Please say something to translate" {
             self.statusLabel.text = "Please wait while we get translations from server"
             self.statusLabel.textColor = .white
@@ -122,6 +160,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         self.statusLabel.text = ""
         self.speechButton.setTitle("Begin New Translation", for: .normal)
         // Re-enable the toggle speech button once translations are ready.
+        self.requestTranslationsButton.setTitle(nil, for: .normal)
         self.toggleSpeechButtonAccessState(enabled: true)
     }
 
@@ -129,8 +168,8 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     func toggleSpeechButtonAccessState(enabled: Bool) {
         self.speechButton.isUserInteractionEnabled = enabled
         if enabled {
-            self.speechButton.setTitle("Begin New Translation", for: .normal)
             self.speechButton.alpha = 1.0
+            speechFinishedButton.isHidden = true
         } else {
             self.speechButton.alpha = 0.6
         }
@@ -165,11 +204,13 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 self.speechTextLabel.text = "Please say something to translate"
                 self.speechTextLabel.textColor = .black
                 self.speechButton.setTitle("Listening....", for: .normal)
+                self.speechFinishedButton.isHidden = false
                 toggleSpeechButtonAccessState(enabled: false)
                 self.startTimeCounterAndUpdateUI()
                 self.view.backgroundColor = .yellow
                 speechButton.setTitleColor(.red, for: .normal)
                 translatedTextLabel.text = ""
+                self.speechFinishedButton.isHidden = false
                 self.recordingIndicator.isHidden = false
                 print("State: Audio Engine Started")
             case .audioEngineStop:
@@ -180,6 +221,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             case .speechRecognized(let recognizedString):
                 self.speechTextLabel.text = recognizedString
                 self.speechTextLabel.textColor = .green
+                self.requestTranslationsButton.setTitle("Translate", for: .normal)
                 self.view.backgroundColor = .orange
                 speechButton.setTitleColor(.green, for: .normal)
                 print("State: Recognized String \(recognizedString)")
@@ -190,7 +232,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 print("State: Availability changed. New availability \(availability)")
             case .speechRecognitionStopped(let finalRecognizedString):
                 self.stopTimeCounter()
-                self.speechButton.setTitle("Getting translations.....", for: .normal)
                 self.speechTextLabel.textColor = .white
                 self.view.backgroundColor = .purple
                 speechButton.setTitleColor(.green, for: .normal)
@@ -203,8 +244,9 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             guard let weakSelf = self else { return }
 
             guard weakSelf.totalTime < maximumAllowedTimeDuration else {
+                weakSelf.speechTextLabel.text = "Maximum time out reached. Please start over"
                 weakSelf.toggleSpeechRecognitionState()
-                weakSelf.speechRecognitionDone()
+                weakSelf.resetState()
                 return
             }
 

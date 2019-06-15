@@ -40,11 +40,11 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
     private let speechRecognitionAuthorizedBlock: () -> Void
     private let timeoutPeriod: Double
     private var recognizedText: String
-    private var previousOperations: [BlockOperation] = []
 
     init(speechRecognitionAuthorizedBlock : @escaping () -> Void, stateUpdateBlock: @escaping (SpeechRecognitionOperationState, Bool) -> Void, timeoutPeriod: Double = 1.5) {
         speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en_US"))
         recognitionStateUpdateBlock = stateUpdateBlock
+        let supportedLocales = SFSpeechRecognizer.supportedLocales()
         speechRecognitionPermissionState = .notDetermined
         self.speechRecognitionAuthorizedBlock = speechRecognitionAuthorizedBlock
         self.timeoutPeriod = timeoutPeriod
@@ -117,61 +117,20 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
             throw SpeechRecognitionOperationError.invalidRecognitionRequest
         }
 
-        recognitionRequest.shouldReportPartialResults = true
+        recognitionRequest.shouldReportPartialResults = false
 
-        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest,
-                                               resultHandler: { [weak self] (result, error) in
-
-
-            guard let weakSelf = self else { return }
-            if result != nil {
-                // Alternate logic to get all possible strings with their confidence levels. We need not use this logic. This is just for demonstration purpose
-                // Commenting this out for now. If you want analyze each individual segment and transcription, you can use the following logic in the code. Commenting out as a part of demo
-//                var maximumConfidenceLevel: Float = 0.0
-//                var bestTranscription = result?.transcriptions.first
-//                if let transcriptions = result?.transcriptions {
-//                    for transcription in transcriptions {
-//                        // We will set the total confidence value for current transcription and use the transcriptio with maximum value of total confidence level.
-//                        var totalConfidenceValue: Float = 0.0
-//                        for segment in transcription.segments {
-//                            totalConfidenceValue = totalConfidenceValue + segment.confidence
-//                        }
-//                        if totalConfidenceValue > maximumConfidenceLevel {
-//                            bestTranscription = transcription
-//                            maximumConfidenceLevel = totalConfidenceValue
-//                        }
-//                    }
-//                }
-//                print("Best Transcription is \(bestTranscription?.formattedString ?? "")")
-                print("Total number of interpretations \(result?.transcriptions.count)")
-                if let recognizedSpeechString = result?.bestTranscription.formattedString {
-                    self?.recognizedText = recognizedSpeechString
-                    self?.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString))
-                    let op = BlockOperation()
-                    op.addExecutionBlock {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + weakSelf.timeoutPeriod) {
-                            if op == weakSelf.previousOperations.last {
-                                weakSelf.updateSpeechRecognitionState(with: .speechRecognized(recognizedSpeechString), finalOutput: true)
-                            } else {
-                                print("Speech recognition in progress. Waiting for user to stop speaking to finalize final output")
-                            }
-                        }
-                    }
-                    weakSelf.previousOperations.append(op)
-                    OperationQueue.main.addOperation(op)
-                } else {
-                    weakSelf.recognizedText = ""
-                    weakSelf.updateSpeechRecognitionState(with: .speechNotRecognized)
-                }
+        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
+            guard let strongSelf = self else { return }
+            if let result = result {
+                strongSelf.updateSpeechRecognitionState(with: .speechRecognized(result.bestTranscription.formattedString))
+            } else {
+                strongSelf.updateSpeechRecognitionState(with: .speechNotRecognized)
             }
         })
 
         let recordingFormat = inputNode.outputFormat(forBus: 0)
 
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, time) in
-            //print(buffer.frameLength)
-            //print("***")
-            //print(time.audioTimeStamp.mSampleTime)
             self.recognitionRequest?.append(buffer)
         }
 
@@ -190,6 +149,10 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         } else {
             try self.runSpeechRecognition()
         }
+    }
+
+    func speechFinished() {
+        recognitionTask?.finish()
     }
 
     // A method to stop audio engine thereby stopping device to input user audio and process it. It will remove the input source from specified Bus.
@@ -228,6 +191,6 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
     }
 
     func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
-
+        print("Is available? \(available)")
     }
 }
