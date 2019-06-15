@@ -9,8 +9,7 @@
 import UIKit
 import Speech
 
-let speechRecognitionTimeout: Double = 1.5
-let maximumAllowedTimeDuration = 10
+let maximumAllowedTimeDuration = 30
 
 class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
@@ -32,11 +31,11 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     @IBOutlet weak var speechButton: UIButton!
 
     // A view to indicate the current limit reached of user speech input in terms of number of seconds
-    let timeLimiterIndicatorLabel = UILabel()
+    @IBOutlet weak var timeLimiterIndicatorLabel: UILabel!
 
-    let speechFinishedButton = UIButton()
+    @IBOutlet weak var speechFinishedButton: UIButton!
 
-    let requestTranslationsButton = UIButton()
+    @IBOutlet weak var requestTranslationsButton: UIButton!
 
     // A utility to easily use the speech recognition facility.
     var speechRecognizerUtility: SpeechRecognitionUtility?
@@ -64,40 +63,17 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             print("Unable to start notifier")
         }
 
-        self.title = "Spanish Translation Request"
-        speechButton.setTitleColor(.green, for: .normal)
+        self.title = "Translations App"
         speechButton.setTitle("Begin Translation...", for: .normal)
         speechTextLabel.text = "Press Begin Translation button to start translation"
         translatedTextLabel.text = ""
-        timeLimiterIndicatorLabel.translatesAutoresizingMaskIntoConstraints = false
         timeLimiterIndicatorLabel.backgroundColor = .green
         timeLimiterIndicatorLabel.textAlignment = .center
         timeLimiterIndicatorLabel.font = UIFont.systemFont(ofSize: 12)
         timeLimiterIndicatorLabel.text = "0"
         statusLabel.text = ""
-        speechFinishedButton.translatesAutoresizingMaskIntoConstraints = false
         speechFinishedButton.addTarget(self, action: #selector(speechFinished), for: .touchUpInside)
-        speechFinishedButton.setTitle("", for: .normal)
-        speechFinishedButton.setTitleColor(.red, for: .normal)
-
-        requestTranslationsButton.translatesAutoresizingMaskIntoConstraints = false
         requestTranslationsButton.addTarget(self, action: #selector(requestTranslations), for: .touchUpInside)
-        requestTranslationsButton.setTitle("", for: .normal)
-        requestTranslationsButton.setTitleColor(.red, for: .normal)
-
-        self.view.addSubview(timeLimiterIndicatorLabel)
-        self.view.addSubview(speechFinishedButton)
-        self.view.addSubview(requestTranslationsButton)
-
-        let viewDictionary: [String: Any] = ["timeLimiterIndicatorLabel": timeLimiterIndicatorLabel, "topLayoutGuide": self.topLayoutGuide, "speechFinishedButton": speechFinishedButton, "statusLabel": statusLabel, "requestTranslationsButton": requestTranslationsButton]
-        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[topLayoutGuide]-[timeLimiterIndicatorLabel(25)]", options: [], metrics: nil, views: viewDictionary))
-        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[timeLimiterIndicatorLabel(25)]-|", options: [], metrics: nil, views: viewDictionary))
-
-        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[speechFinishedButton]-|", options: [], metrics: nil, views: viewDictionary))
-
-        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[requestTranslationsButton]-|", options: [], metrics: nil, views: viewDictionary))
-
-        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[statusLabel]-[speechFinishedButton(44)]-[requestTranslationsButton(44)]", options: [], metrics: nil, views: viewDictionary))
     }
 
     @objc func speechFinished() {

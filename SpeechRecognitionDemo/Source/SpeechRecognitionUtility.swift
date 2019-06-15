@@ -116,7 +116,7 @@ class SpeechRecognitionUtility: NSObject {
             throw SpeechRecognitionOperationError.invalidRecognitionRequest
         }
 
-        recognitionRequest.shouldReportPartialResults = true
+        recognitionRequest.shouldReportPartialResults = false
 
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
             guard let strongSelf = self else { return }
