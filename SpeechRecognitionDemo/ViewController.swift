@@ -49,6 +49,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
         reachability.whenReachable = { [weak self] reachable in
             self?.toggleSpeechButtonAccessState(enabled: true)
+            self?.speechButton.setTitle("Begin New Translation", for: .normal)
         }
 
         reachability.whenUnreachable = {[weak self] _ in
@@ -77,7 +78,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         statusLabel.text = ""
         speechFinishedButton.translatesAutoresizingMaskIntoConstraints = false
         speechFinishedButton.addTarget(self, action: #selector(speechFinished), for: .touchUpInside)
-        speechFinishedButton.setTitle("Finish Speech", for: .normal)
+        speechFinishedButton.setTitle("", for: .normal)
         speechFinishedButton.setTitleColor(.red, for: .normal)
 
         requestTranslationsButton.translatesAutoresizingMaskIntoConstraints = false

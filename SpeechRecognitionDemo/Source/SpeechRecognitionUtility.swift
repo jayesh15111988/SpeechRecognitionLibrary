@@ -29,7 +29,7 @@ enum SpeechRecognitionOperationState {
     case speechRecognitionStopped(String)
 }
 
-class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
+class SpeechRecognitionUtility: NSObject {
 
     private let speechRecognizer: SFSpeechRecognizer?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
@@ -51,7 +51,6 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
         self.recognizedText = ""
 
         super.init()
-        speechRecognizer?.delegate = self
 
         SFSpeechRecognizer.requestAuthorization { (status) in
             self.speechRecognitionPermissionState = status
@@ -117,7 +116,7 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
             throw SpeechRecognitionOperationError.invalidRecognitionRequest
         }
 
-        recognitionRequest.shouldReportPartialResults = false
+        recognitionRequest.shouldReportPartialResults = true
 
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
             guard let strongSelf = self else { return }
@@ -188,9 +187,5 @@ class SpeechRecognitionUtility: NSObject, SFSpeechRecognizerDelegate {
 
     private func isSpeechRecognitionOn() -> Bool {
         return self.audioEngine?.isRunning ?? false
-    }
-
-    func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
-        print("Is available? \(available)")
     }
 }
