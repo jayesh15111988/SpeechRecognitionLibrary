@@ -116,13 +116,22 @@ class SpeechRecognitionUtility: NSObject {
             throw SpeechRecognitionOperationError.invalidRecognitionRequest
         }
 
-        recognitionRequest.shouldReportPartialResults = false
+        recognitionRequest.shouldReportPartialResults = true
 
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
             guard let strongSelf = self else { return }
             // Hypotheses for possible transcriptions, sorted in decending order of confidence (more likely first)
-            // result.transcriptions
+
             if let result = result {
+
+                for transcription in result.transcriptions {
+                    for segment in transcription.segments {
+                        let bestString = transcription.formattedString
+                        let indexTo = bestString.index(bestString.startIndex, offsetBy: segment.substringRange.location)
+                        print("Segment is \(bestString[indexTo...]) with probability value of \(segment.confidence)")
+                    }
+                }
+
                 strongSelf.updateSpeechRecognitionState(with: .speechRecognized(result.bestTranscription.formattedString))
             } else {
                 strongSelf.updateSpeechRecognitionState(with: .speechNotRecognized)
