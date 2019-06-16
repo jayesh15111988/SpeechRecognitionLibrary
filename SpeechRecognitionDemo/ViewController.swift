@@ -47,12 +47,17 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         speechTextLabel.text = "Tap Begin translations to initiate speech recognition process"
         translatedTextLabel.text = ""
 
-        reachability.whenReachable = { reachable in
+        reachability.whenReachable = { [weak self] reachable in
             print("Network service reachable")
+            self?.toggleSpeechButtonAccessState(enabled: true)
+            self?.speechButton.setTitle("Begin New Session", for: .normal)
         }
 
-        reachability.whenUnreachable = { _ in
+        reachability.whenUnreachable = { [weak self] _ in
             print("Network service unreachable")
+            self?.speechButton.setTitle("No network connectivity", for: .normal)
+            self?.toggleSpeechButtonAccessState(enabled: false)
+            self?.speechFinishedButton.isHidden = true
         }
 
         do {
@@ -95,7 +100,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     private func resetState() {
         self.statusLabel.text = ""
-        self.speechButton.setTitle("Begin New Translation", for: .normal)
+        self.speechButton.setTitle("Begin New Session", for: .normal)
         self.speechButton.setTitleColor(.green, for: .normal)
         // Re-enable the toggle speech button once translations are ready.
         self.requestTranslationsButton.setTitle(nil, for: .normal)

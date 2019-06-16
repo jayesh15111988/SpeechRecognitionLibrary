@@ -76,16 +76,6 @@ class SpeechRecognitionUtility: NSObject {
             recognitionTask = nil
         }
 
-        let audioSession = AVAudioSession.sharedInstance()
-        do {
-            try audioSession.setCategory(AVAudioSessionCategoryRecord)
-            try audioSession.setMode(AVAudioSessionModeMeasurement)
-            try audioSession.setActive(true, with: .notifyOthersOnDeactivation)
-        } catch let error {
-            print("Error Occurred: \(error.localizedDescription)")
-            throw SpeechRecognitionOperationError.audioSessionUnavailable
-        }
-
         // For utilizing direct input from mic
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
 
@@ -99,7 +89,7 @@ class SpeechRecognitionUtility: NSObject {
             throw SpeechRecognitionOperationError.invalidRecognitionRequest
         }
 
-        recognitionRequest.shouldReportPartialResults = false
+        recognitionRequest.shouldReportPartialResults = true
 
         recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
             guard let strongSelf = self else { return }
