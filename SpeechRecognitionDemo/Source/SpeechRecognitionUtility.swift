@@ -107,6 +107,15 @@ class SpeechRecognitionUtility: NSObject {
             guard let strongSelf = self else { return }
             // Hypotheses for possible transcriptions, sorted in decending order of confidence (more likely first)
             if let result = result {
+
+                for transcription in result.transcriptions {
+                    for segment in transcription.segments {
+                        let bestString = transcription.formattedString
+                        let indexTo = bestString.index(bestString.startIndex, offsetBy: segment.substringRange.location)
+                        print("Segment is \(bestString[indexTo...]) with probability value of \(segment.confidence)\n\n")
+                    }
+                }
+
                 strongSelf.updateSpeechRecognitionState(with: .speechRecognized(result.bestTranscription.formattedString))
             } else {
                 strongSelf.updateSpeechRecognitionState(with: .speechNotRecognized)
