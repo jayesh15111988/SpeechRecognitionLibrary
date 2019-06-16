@@ -103,7 +103,7 @@ class SpeechRecognitionUtility: NSObject {
 
         recognitionRequest.shouldReportPartialResults = true
 
-        recognitionTask = speechRecognizer.recognitionTask(with: urlRecognitionRequest!, resultHandler: { [weak self] (result, error) in
+        recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
             guard let strongSelf = self else { return }
             // Hypotheses for possible transcriptions, sorted in decending order of confidence (more likely first)
             if let result = result {
@@ -122,19 +122,19 @@ class SpeechRecognitionUtility: NSObject {
             }
         })
 
-//        let recordingFormat = inputNode.outputFormat(forBus: 0)
-//
-//        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, time) in
-//            self.recognitionRequest?.append(buffer)
-//        }
-//
-//        audioEngine.prepare()
-//
-//        if let _ = try? audioEngine.start() {
-//            self.updateSpeechRecognitionState(with: .audioEngineStart)
-//        } else {
-//            throw SpeechRecognitionOperationError.audioEngineUnavailable
-//        }
+        let recordingFormat = inputNode.outputFormat(forBus: 0)
+
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, time) in
+            self.recognitionRequest?.append(buffer)
+        }
+
+        audioEngine.prepare()
+
+        if let _ = try? audioEngine.start() {
+            self.updateSpeechRecognitionState(with: .audioEngineStart)
+        } else {
+            throw SpeechRecognitionOperationError.audioEngineUnavailable
+        }
     }
 
     private func updateSpeechRecognitionState(with state: SpeechRecognitionOperationState, finalOutput: Bool = false) {
