@@ -15,6 +15,7 @@
 		E37379A51E78E0A100C546DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E37379A41E78E0A100C546DC /* Assets.xcassets */; };
 		E37379A81E78E0A100C546DC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E37379A61E78E0A100C546DC /* LaunchScreen.storyboard */; };
 		E37379B31E78E0A100C546DC /* SpeechRecognitionDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37379B21E78E0A100C546DC /* SpeechRecognitionDemoTests.swift */; };
+		E3ABECA922B6E8F4007738EF /* harvard.wav in Resources */ = {isa = PBXBuildFile; fileRef = E3ABECA822B6E8F4007738EF /* harvard.wav */; };
 		E3D3DC251E7CEB2900599073 /* SpeechRecognitionUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D3DC241E7CEB2900599073 /* SpeechRecognitionUtility.swift */; };
 		E3FB3E4A2134613900F6DC8A /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FB3E492134613900F6DC8A /* Reachability.swift */; };
 /* End PBXBuildFile section */
@@ -42,6 +43,7 @@
 		E37379AE1E78E0A100C546DC /* SpeechRecognitionDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SpeechRecognitionDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E37379B21E78E0A100C546DC /* SpeechRecognitionDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechRecognitionDemoTests.swift; sourceTree = "<group>"; };
 		E37379B41E78E0A100C546DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E3ABECA822B6E8F4007738EF /* harvard.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = harvard.wav; sourceTree = "<group>"; };
 		E3D3DC241E7CEB2900599073 /* SpeechRecognitionUtility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SpeechRecognitionUtility.swift; path = Source/SpeechRecognitionUtility.swift; sourceTree = "<group>"; };
 		E3FB3E492134613900F6DC8A /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -85,6 +87,7 @@
 		E373799C1E78E0A100C546DC /* SpeechRecognitionDemo */ = {
 			isa = PBXGroup;
 			children = (
+				E3ABECA522B6E567007738EF /* Audio */,
 				E3ABECA422B5B1E3007738EF /* Utility */,
 				E3FB3E482134612800F6DC8A /* 3rd Party */,
 				E3D3DC211E7CBC3D00599073 /* Source */,
@@ -114,6 +117,14 @@
 				E353AE6A2009C0A700B19278 /* NetworkUtility.swift */,
 			);
 			name = Utility;
+			sourceTree = "<group>";
+		};
+		E3ABECA522B6E567007738EF /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				E3ABECA822B6E8F4007738EF /* harvard.wav */,
+			);
+			name = Audio;
 			sourceTree = "<group>";
 		};
 		E3D3DC211E7CBC3D00599073 /* Source */ = {
@@ -220,6 +231,7 @@
 			files = (
 				E37379A81E78E0A100C546DC /* LaunchScreen.storyboard in Resources */,
 				E37379A51E78E0A100C546DC /* Assets.xcassets in Resources */,
+				E3ABECA922B6E8F4007738EF /* harvard.wav in Resources */,
 				E330E66320FB9A300046F02F /* red_icon.png in Resources */,
 				E37379A31E78E0A100C546DC /* Main.storyboard in Resources */,
 			);

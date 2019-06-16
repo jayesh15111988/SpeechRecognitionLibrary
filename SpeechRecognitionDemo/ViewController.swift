@@ -137,6 +137,8 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             print("Recognition request is null. Expected non-null value")
         } catch SpeechRecognitionOperationError.audioEngineUnavailable {
             print("Audio engine is unavailable. Cannot perform speech recognition")
+        } catch SpeechRecognitionOperationError.speechRecognizerAvailable {
+            print("Specified speech recognizer object is unavailable.")
         } catch {
             print("Unknown error occurred")
         }

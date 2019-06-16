@@ -16,6 +16,7 @@ enum SpeechRecognitionOperationError: Error {
     case audioSessionUnavailable
     case invalidRecognitionRequest
     case audioEngineUnavailable
+    case speechRecognizerAvailable
 }
 
 enum SpeechRecognitionOperationState {
@@ -32,6 +33,7 @@ class SpeechRecognitionUtility: NSObject {
 
     private var speechRecognizer: SFSpeechRecognizer?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var urlRecognitionRequest: SFSpeechURLRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private var audioEngine: AVAudioEngine?
     private var recognitionStateUpdateBlock: (SpeechRecognitionOperationState, Bool) -> Void
@@ -70,6 +72,11 @@ class SpeechRecognitionUtility: NSObject {
     }
 
     func runSpeechRecognition() throws  {
+
+        guard let speechRecognizer = speechRecognizer else {
+            throw SpeechRecognitionOperationError.speechRecognizerAvailable
+        }
+
         if recognitionTask != nil {
             recognitionTask?.cancel()
             updateSpeechRecognitionState(with: .recognitionTaskCancelled)
@@ -78,6 +85,11 @@ class SpeechRecognitionUtility: NSObject {
 
         // For utilizing direct input from mic
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+
+        if let audioFilePath = Bundle.main.path(forResource: "harvard", ofType: "wav") {
+            let audioFileURL = URL(fileURLWithPath: audioFilePath)
+            urlRecognitionRequest = SFSpeechURLRecognitionRequest(url: audioFileURL)
+        }
 
         guard let audioEngine = audioEngine else {
             throw SpeechRecognitionOperationError.audioEngineUnavailable
@@ -91,7 +103,7 @@ class SpeechRecognitionUtility: NSObject {
 
         recognitionRequest.shouldReportPartialResults = true
 
-        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
+        recognitionTask = speechRecognizer.recognitionTask(with: urlRecognitionRequest!, resultHandler: { [weak self] (result, error) in
             guard let strongSelf = self else { return }
             // Hypotheses for possible transcriptions, sorted in decending order of confidence (more likely first)
             if let result = result {
@@ -110,19 +122,19 @@ class SpeechRecognitionUtility: NSObject {
             }
         })
 
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, time) in
-            self.recognitionRequest?.append(buffer)
-        }
-
-        audioEngine.prepare()
-
-        if let _ = try? audioEngine.start() {
-            self.updateSpeechRecognitionState(with: .audioEngineStart)
-        } else {
-            throw SpeechRecognitionOperationError.audioEngineUnavailable
-        }
+//        let recordingFormat = inputNode.outputFormat(forBus: 0)
+//
+//        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer, time) in
+//            self.recognitionRequest?.append(buffer)
+//        }
+//
+//        audioEngine.prepare()
+//
+//        if let _ = try? audioEngine.start() {
+//            self.updateSpeechRecognitionState(with: .audioEngineStart)
+//        } else {
+//            throw SpeechRecognitionOperationError.audioEngineUnavailable
+//        }
     }
 
     private func updateSpeechRecognitionState(with state: SpeechRecognitionOperationState, finalOutput: Bool = false) {
