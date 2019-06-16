@@ -19,7 +19,7 @@ enum SpeechRecognitionOperationState {
 
 class SpeechRecognitionUtility: NSObject {
 
-    private var speechRecognizer: SFSpeechRecognizer!
+    private var speechRecognizer: SFSpeechRecognizer?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private var audioEngine: AVAudioEngine?
@@ -29,6 +29,7 @@ class SpeechRecognitionUtility: NSObject {
     private var recognizedText: String = ""
 
     init(speechRecognitionAuthorizedBlock : @escaping () -> Void, stateUpdateBlock: @escaping (SpeechRecognitionOperationState, Bool) -> Void) {
+
     }
 
     func startSpeechRecognition() throws {

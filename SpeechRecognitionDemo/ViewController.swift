@@ -38,6 +38,12 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        title = "Translations app"
+        speechButton.setTitle("Begin Translations", for: .normal)
+        speechTextLabel.text = "Tap Begin translations to initiate speech recognition process"
+        translatedTextLabel.text = ""
+        
+
         reachability.whenReachable = { reachable in
 
         }
