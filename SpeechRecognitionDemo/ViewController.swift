@@ -24,9 +24,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // A label for showing the translated text in the app
     @IBOutlet weak var translatedTextLabel: UILabel!
 
-    // An image to indicate the recording status of current session
-    @IBOutlet weak var recordingIndicator: UIImageView!
-
     // A button to begin/terminate or toggle the speech recognition.
     @IBOutlet weak var speechButton: UIButton!
 
@@ -66,7 +63,10 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
 
     @IBAction func speechFinished() {
-
+        speechRecognizerUtility?.speechFinished()
+        speechFinishedButton.isHidden = true
+        speechButton.setTitle(nil, for: .normal)
+        stopTimeCounter()
     }
 
     @IBAction func requestTranslations() {
@@ -141,6 +141,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         self.speechButton.isUserInteractionEnabled = enabled
         if enabled {
             self.speechButton.alpha = 1.0
+            speechFinishedButton.isHidden = true
         } else {
             self.speechButton.alpha = 0.6
         }
@@ -159,6 +160,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             startTimeCounterAndUpdateUI()
             speechButton.setTitleColor(.red, for: .normal)
             translatedTextLabel.text = ""
+            speechFinishedButton.isHidden = false
             print("State: Audio Engine Started")
         case .audioEngineStop:
             print("State: Audio Engine Stopped")
