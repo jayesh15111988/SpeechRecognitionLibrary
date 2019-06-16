@@ -140,7 +140,21 @@ class SpeechRecognitionUtility: NSObject {
 
     // A method to stop audio engine thereby stopping device to input user audio and process it. It will remove the input source from specified Bus.
     private func stopAudioRecognition() {
+        guard let audioEngine = audioEngine else { return }
+        if audioEngine.isRunning {
+            audioEngine.stop()
+            self.recognitionRequest?.endAudio()
+            self.updateSpeechRecognitionState(with: .audioEngineStop)
+            audioEngine.inputNode.removeTap(onBus: 0)
+        }
 
+        self.recognitionRequest = nil
+
+        if self.recognitionTask != nil {
+            self.recognitionTask?.cancel()
+            self.updateSpeechRecognitionState(with: .recognitionTaskCancelled)
+            self.recognitionTask = nil
+        }
     }
 
     private func isSpeechRecognitionOn() -> Bool {
