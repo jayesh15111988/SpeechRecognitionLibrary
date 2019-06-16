@@ -26,8 +26,6 @@ enum SpeechRecognitionOperationState {
     case recognitionTaskCancelled
     case speechRecognized(String)
     case speechNotRecognized
-    // Called when speech recognition is done and we're ready to send those strings to server for translations
-    case speechRecognitionStopped(String)
 }
 
 class SpeechRecognitionUtility: NSObject {

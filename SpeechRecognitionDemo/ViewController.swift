@@ -9,6 +9,8 @@
 import UIKit
 import Speech
 
+let maximumAllowedTimeDuration = 30
+
 class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     let reachability = Reachability()!
@@ -36,6 +38,9 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     @IBOutlet weak var requestTranslationsButton: UIButton!
 
     var speechRecognizerUtility: SpeechRecognitionUtility?
+
+    private var timer: Timer?
+    private var totalTime: Int = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,6 +72,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     @IBAction func requestTranslations() {
         print("requesting translations....")
         toggleSpeechRecognitionState()
+        stopTimeCounter()
         requestTranslationsFromServer()
     }
 
@@ -90,6 +96,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     private func resetState() {
         self.statusLabel.text = ""
         self.speechButton.setTitle("Begin New Translation", for: .normal)
+        self.speechButton.setTitleColor(.green, for: .normal)
         // Re-enable the toggle speech button once translations are ready.
         self.requestTranslationsButton.setTitle(nil, for: .normal)
         self.toggleSpeechButtonAccessState(enabled: true)
@@ -149,6 +156,7 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             self.speechTextLabel.text = "Please say something to translate"
             self.speechButton.setTitle("Listening....", for: .normal)
             toggleSpeechButtonAccessState(enabled: false)
+            startTimeCounterAndUpdateUI()
             speechButton.setTitleColor(.red, for: .normal)
             translatedTextLabel.text = ""
             print("State: Audio Engine Started")
@@ -163,10 +171,39 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
             print("State: Recognized String \(recognizedString)")
         case .speechNotRecognized:
             print("State: Speech Not Recognized")
-        // Called when speech recognition is done, audio engine is stopped and strings are finally sent for translation on the server.
-        case .speechRecognitionStopped(let finalRecognizedString):
-            speechButton.setTitleColor(.green, for: .normal)
-            print("State: Speech Recognition Stopped with final string \(finalRecognizedString)")
         }
+    }
+
+    private func startTimeCounterAndUpdateUI() {
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { [weak self] (timer) in
+            guard let weakSelf = self else { return }
+
+            guard weakSelf.totalTime < maximumAllowedTimeDuration else {
+                weakSelf.speechTextLabel.text = "Maximum time out reached. Please start over"
+                weakSelf.toggleSpeechRecognitionState()
+                weakSelf.resetState()
+                weakSelf.stopTimeCounter()
+                return
+            }
+
+            weakSelf.totalTime = weakSelf.totalTime + 1
+
+            if weakSelf.totalTime >= 2 * (maximumAllowedTimeDuration / 3) {
+                weakSelf.timeLimiterIndicatorLabel.backgroundColor = .red
+            } else if weakSelf.totalTime >= maximumAllowedTimeDuration / 3 {
+                weakSelf.timeLimiterIndicatorLabel.backgroundColor = .orange
+            } else {
+                weakSelf.timeLimiterIndicatorLabel.backgroundColor = .green
+            }
+            weakSelf.timeLimiterIndicatorLabel.text = "\(weakSelf.totalTime)"
+        })
+    }
+
+    private func stopTimeCounter() {
+        self.timer?.invalidate()
+        self.timer = nil
+        self.totalTime = 0
+        self.timeLimiterIndicatorLabel.backgroundColor = .green
+        self.timeLimiterIndicatorLabel.text = "0"
     }
 }
