@@ -35,21 +35,22 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     @IBOutlet weak var requestTranslationsButton: UIButton!
 
+    var speechRecognizerUtility: SpeechRecognitionUtility?
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         title = "Translations app"
-        speechButton.setTitle("Begin Translations", for: .normal)
+        speechButton.setTitle("Begin Translations...", for: .normal)
         speechTextLabel.text = "Tap Begin translations to initiate speech recognition process"
         translatedTextLabel.text = ""
-        
 
         reachability.whenReachable = { reachable in
-
+            print("Network service reachable")
         }
 
         reachability.whenUnreachable = { _ in
-
+            print("Network service unreachable")
         }
 
         do {
@@ -57,8 +58,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         } catch {
             print("Unable to start notifier")
         }
-
-        self.title = "Translations App"
     }
 
     @IBAction func speechFinished() {
@@ -70,7 +69,22 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
 
     @IBAction func saySomethingButtonPressed(_ sender: Any) {
+        if speechRecognizerUtility == nil {
+            speechRecognizerUtility = SpeechRecognitionUtility(speechRecognitionAuthorizedBlock: { [weak self] in
+                self?.toggleSpeechRecognitionState()
+            }, stateUpdateBlock: { [weak self] (currentSpeechRecognitionState, finished) in
+                self?.stateChangedWith(state: currentSpeechRecognitionState)
+                if finished {
+                    self?.toggleSpeechRecognitionState()
+                }
+            })
+        } else {
+            toggleSpeechRecognitionState()
+        }
+    }
 
+    private func toggleSpeechRecognitionState() {
+        
     }
 
     func requestTranslationsFromServer() {
@@ -82,6 +96,10 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
 
     func toggleSpeechButtonAccessState(enabled: Bool) {
+
+    }
+
+    private func stateChangedWith(state: SpeechRecognitionOperationState) {
 
     }
 }

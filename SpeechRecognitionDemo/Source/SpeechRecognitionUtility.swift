@@ -14,7 +14,7 @@ enum SpeechRecognitionOperationError: Error {
 }
 
 enum SpeechRecognitionOperationState {
-
+    case denied
 }
 
 class SpeechRecognitionUtility: NSObject {
@@ -23,12 +23,30 @@ class SpeechRecognitionUtility: NSObject {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private var audioEngine: AVAudioEngine?
-    private var recognitionStateUpdateBlock: ((SpeechRecognitionOperationState, Bool) -> Void)?
+    private var recognitionStateUpdateBlock: (SpeechRecognitionOperationState, Bool) -> Void
     private var speechRecognitionPermissionState: SFSpeechRecognizerAuthorizationStatus = .notDetermined
     private var speechRecognitionAuthorizedBlock: (() -> Void)?
-    private var recognizedText: String = ""
 
     init(speechRecognitionAuthorizedBlock : @escaping () -> Void, stateUpdateBlock: @escaping (SpeechRecognitionOperationState, Bool) -> Void) {
+        speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en_US"))
+        let supportedLocales = SFSpeechRecognizer.supportedLocales()
+        recognitionStateUpdateBlock = stateUpdateBlock
+        super.init()
+
+        SFSpeechRecognizer.requestAuthorization { (status) in
+            self.speechRecognitionPermissionState = status
+            if status == .authorized {
+                print("Authorized")
+                self.audioEngine = AVAudioEngine()
+                OperationQueue.main.addOperation {
+                    speechRecognitionAuthorizedBlock()
+                }
+            } else {
+                print("Denied")
+                // Show permission denial message on UI
+                self.recognitionStateUpdateBlock(.denied, true)
+            }
+        }
 
     }
 
