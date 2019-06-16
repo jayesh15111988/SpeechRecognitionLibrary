@@ -84,7 +84,11 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
 
     private func toggleSpeechRecognitionState() {
-        
+        do {
+            try self.speechRecognizerUtility?.toggleSpeechRecognitionActivity()
+        } catch {
+            print("Error occurred")
+        }
     }
 
     func requestTranslationsFromServer() {
