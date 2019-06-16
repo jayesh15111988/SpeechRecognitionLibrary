@@ -65,7 +65,25 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
 
     @IBAction func requestTranslations() {
+        print("requesting translations....")
+        toggleSpeechRecognitionState()
+        requestTranslationsFromServer()
+    }
 
+    func requestTranslationsFromServer() {
+        // Trigger the request to get translations as soon as user has done providing full speech input. Don't trigger until query length is at least one.
+        self.speechButton.setTitle("Getting translations.....", for: .normal)
+        if let query = self.speechTextLabel.text, query.count > 0 {
+            self.statusLabel.text = "Please wait while we get translations from server"
+            // Disable the toggle speech button while we're getting translations from server.
+            toggleSpeechButtonAccessState(enabled: false)
+            NetworkRequest.sendRequestWith(query: query, completion: { (translation) in
+                OperationQueue.main.addOperation {
+                    // Explicitly execute the code on main thread since the request we get back need not be on the main thread.
+                    self.translatedTextLabel.text = translation
+                }
+            })
+        }
     }
 
     @IBAction func saySomethingButtonPressed(_ sender: Any) {
@@ -103,19 +121,47 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         }
     }
 
-    func requestTranslationsFromServer() {
-        // Trigger the request to get translations as soon as user has done providing full speech input. Don't trigger until query length is at least one.
-    }
-
     func resetState() {
 
     }
 
     func toggleSpeechButtonAccessState(enabled: Bool) {
-
+        self.speechButton.isUserInteractionEnabled = enabled
+        if enabled {
+            self.speechButton.alpha = 1.0
+        } else {
+            self.speechButton.alpha = 0.6
+        }
     }
 
     private func stateChangedWith(state: SpeechRecognitionOperationState) {
-        print("Current state.....\(state)")
+        switch state {
+        case .denied:
+            print("Access to Speech Recognizer denied")
+        case .authorized:
+            print("State: Speech recognition authorized")
+        case .audioEngineStart:
+            self.speechTextLabel.text = "Please say something to translate"
+            self.speechButton.setTitle("Listening....", for: .normal)
+            toggleSpeechButtonAccessState(enabled: false)
+            speechButton.setTitleColor(.red, for: .normal)
+            translatedTextLabel.text = ""
+            print("State: Audio Engine Started")
+        case .audioEngineStop:
+            print("State: Audio Engine Stopped")
+        case .recognitionTaskCancelled:
+            print("State: Recognition Task Cancelled")
+        case .speechRecognized(let recognizedString):
+            self.speechTextLabel.text = recognizedString
+            self.requestTranslationsButton.setTitle("Translate", for: .normal)
+            speechButton.setTitleColor(.green, for: .normal)
+            print("State: Recognized String \(recognizedString)")
+        case .speechNotRecognized:
+            print("State: Speech Not Recognized")
+        // Called when speech recognition is done, audio engine is stopped and strings are finally sent for translation on the server.
+        case .speechRecognitionStopped(let finalRecognizedString):
+            speechButton.setTitleColor(.green, for: .normal)
+            print("State: Speech Recognition Stopped with final string \(finalRecognizedString)")
+        }
     }
 }
