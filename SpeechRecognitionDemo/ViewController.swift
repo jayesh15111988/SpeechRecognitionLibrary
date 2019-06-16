@@ -116,6 +116,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
 
     private func stateChangedWith(state: SpeechRecognitionOperationState) {
-        print("Current state.....")
+        print("Current state.....\(state)")
     }
 }
