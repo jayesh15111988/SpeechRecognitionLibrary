@@ -81,9 +81,18 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
                 OperationQueue.main.addOperation {
                     // Explicitly execute the code on main thread since the request we get back need not be on the main thread.
                     self.translatedTextLabel.text = translation
+                    self.resetState()
                 }
             })
         }
+    }
+
+    private func resetState() {
+        self.statusLabel.text = ""
+        self.speechButton.setTitle("Begin New Translation", for: .normal)
+        // Re-enable the toggle speech button once translations are ready.
+        self.requestTranslationsButton.setTitle(nil, for: .normal)
+        self.toggleSpeechButtonAccessState(enabled: true)
     }
 
     @IBAction func saySomethingButtonPressed(_ sender: Any) {
@@ -119,10 +128,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         } catch {
             print("Unknown error occurred")
         }
-    }
-
-    func resetState() {
-
     }
 
     func toggleSpeechButtonAccessState(enabled: Bool) {
