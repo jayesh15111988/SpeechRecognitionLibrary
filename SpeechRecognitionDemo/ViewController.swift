@@ -85,9 +85,21 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
 
     private func toggleSpeechRecognitionState() {
         do {
-            try self.speechRecognizerUtility?.toggleSpeechRecognitionActivity()
+            try speechRecognizerUtility?.toggleSpeechRecognitionActivity()
+        } catch SpeechRecognitionOperationError.denied {
+            print("Speech Recognition access denied")
+        } catch SpeechRecognitionOperationError.notDetermined {
+            print("Unrecognized Error occurred")
+        } catch SpeechRecognitionOperationError.restricted {
+            print("Speech recognition access restricted")
+        } catch SpeechRecognitionOperationError.audioSessionUnavailable {
+            print("Audio session unavailable")
+        } catch SpeechRecognitionOperationError.invalidRecognitionRequest {
+            print("Recognition request is null. Expected non-null value")
+        } catch SpeechRecognitionOperationError.audioEngineUnavailable {
+            print("Audio engine is unavailable. Cannot perform speech recognition")
         } catch {
-            print("Error occurred")
+            print("Unknown error occurred")
         }
     }
 
@@ -104,6 +116,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     }
 
     private func stateChangedWith(state: SpeechRecognitionOperationState) {
-
+        print("Current state.....")
     }
 }
