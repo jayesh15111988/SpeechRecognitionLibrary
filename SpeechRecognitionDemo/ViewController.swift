@@ -66,23 +66,16 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
         self.title = "Translations App"
         speechButton.setTitle("Begin Translation...", for: .normal)
         speechTextLabel.text = "Press Begin Translation button to start translation"
-        translatedTextLabel.text = ""
-        timeLimiterIndicatorLabel.backgroundColor = .green
-        timeLimiterIndicatorLabel.textAlignment = .center
-        timeLimiterIndicatorLabel.font = UIFont.systemFont(ofSize: 12)
-        timeLimiterIndicatorLabel.text = "0"
-        statusLabel.text = ""
-        speechFinishedButton.addTarget(self, action: #selector(speechFinished), for: .touchUpInside)
-        requestTranslationsButton.addTarget(self, action: #selector(requestTranslations), for: .touchUpInside)
     }
 
-    @objc func speechFinished() {
+    @IBAction func speechFinished() {
         speechRecognizerUtility?.speechFinished()
         speechFinishedButton.isHidden = true
         speechButton.setTitle(nil, for: .normal)
+        stopTimeCounter()
     }
 
-    @objc func requestTranslations() {
+    @IBAction func requestTranslations() {
         toggleSpeechRecognitionState()
         stopTimeCounter()
         requestTranslationsFromServer()
