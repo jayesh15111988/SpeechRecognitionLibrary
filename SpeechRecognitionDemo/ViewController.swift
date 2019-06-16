@@ -22,9 +22,6 @@ class ViewController: UIViewController, SFSpeechRecognizerDelegate {
     // A label for showing the translated text in the app
     @IBOutlet weak var translatedTextLabel: UILabel!
 
-    // An image to indicate the recording status of current session
-    @IBOutlet weak var recordingIndicator: UIImageView!
-
     // A button to begin/terminate or toggle the speech recognition.
     @IBOutlet weak var speechButton: UIButton!
 
